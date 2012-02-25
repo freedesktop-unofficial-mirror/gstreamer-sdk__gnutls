@@ -1380,7 +1380,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-valgrind-tests
-SUBDIRS = gl lib extra po src doc tests $(am__append_1)
+SUBDIRS = gl lib extra po src tests $(am__append_1)
 ACLOCAL_AMFLAGS = -I m4 -I gl/m4 -I src/libopts/m4
 EXTRA_DIST = cfg.mk maint.mk .clcopying
 all: config.h
