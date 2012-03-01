@@ -1362,7 +1362,9 @@ MAINTAINERCLEANFILES = Makefile.in
 @INSTALL_LIBOPTS_FALSE@noinst_LTLIBRARIES = libopts.la
 libopts_la_SOURCES = libopts.c
 libopts_la_CPPFLAGS = -I$(top_srcdir)
-libopts_la_LDFLAGS = -version-info  36:2:11
+libopts_la_LDFLAGS = -version-info  36:2:11 \
+                          ../../gl/libgnu.la \
+                          -lintl
 EXTRA_DIST = \
     ag-char-map.h           alias.c                 ao-strs.c  \
     ao-strs.h               autoopts/options.h      autoopts/project.h  \
