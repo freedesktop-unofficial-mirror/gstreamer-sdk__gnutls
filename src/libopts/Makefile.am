@@ -1,5 +1,12 @@
 ## LIBOPTS Makefile
 MAINTAINERCLEANFILES    = Makefile.in
+
+if WINDOWS
+INTL_LIBS = -lintl
+else
+INTL_LIBS =
+endif
+
 if INSTALL_LIBOPTS
 lib_LTLIBRARIES         = libopts.la
 else
@@ -8,8 +15,8 @@ endif
 libopts_la_SOURCES      = libopts.c
 libopts_la_CPPFLAGS     = -I$(top_srcdir)
 libopts_la_LDFLAGS      = -version-info  36:2:11 \
-                          ../../gl/libgnu.la \
-                          -lintl
+                          ../../gl/libgnu.la $(INTL_LIBS)
+
 EXTRA_DIST              = \
     ag-char-map.h           alias.c                 ao-strs.c  \
     ao-strs.h               autoopts/options.h      autoopts/project.h  \

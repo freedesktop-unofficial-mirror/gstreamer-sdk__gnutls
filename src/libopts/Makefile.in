@@ -1363,8 +1363,8 @@ MAINTAINERCLEANFILES = Makefile.in
 libopts_la_SOURCES = libopts.c
 libopts_la_CPPFLAGS = -I$(top_srcdir)
 libopts_la_LDFLAGS = -version-info  36:2:11 \
-                          ../../gl/libgnu.la \
-                          -lintl
+                          ../../gl/libgnu.la $(INTL_LIBS)
+
 EXTRA_DIST = \
     ag-char-map.h           alias.c                 ao-strs.c  \
     ao-strs.h               autoopts/options.h      autoopts/project.h  \
