@@ -2,6 +2,194 @@ GnuTLS NEWS -- History of user-visible changes.                -*- outline -*-
 Copyright (C) 2000-2012 Free Software Foundation, Inc.
 See the end for copying conditions.
 
+* Version 3.0.22 (released 2012-08-04)
+
+** libgnutls: gnutls_certificate_set_x509_system_trust()
+is now supported on OpenBSD.
+
+** libgnutls: When verifying a certificate chain make sure it is chain.
+If the chain is wronly interrupted at some point then truncate it,
+and only try to verify the correct part. Patch by David Woodhouse
+
+** libgnutls: Restored the behavior of gnutls_x509_privkey_import_pkcs8()
+which now may (again) accept a NULL password.
+
+** certtool: Allow the user to choose the hash algorithm
+when signing certificate request or certificate revocation list.
+
+** API and ABI modifications:
+No changes since last version.
+
+
+* Version 3.0.21 (released 2012-07-02)
+
+** libgnutls: fixed bug in gnutls_x509_privkey_import() 
+that prevented the loading of EC private keys when DER
+encoded. Reported by David Woodhouse.
+
+** libgnutls: In DTLS larger to mtu records result to 
+GNUTLS_E_LARGE_PACKET instead of being truncated.
+
+** libgnutls: gnutls_dtls_get_data_mtu() is more precise. Based
+on patch by David Woodhouse.
+
+** libgnutls: Fixed memory leak in PKCS #8 key import.
+
+** libgnutls: Added support for an old version of the DTLS protocol
+used by openconnect vpn client for compatibility with Cisco's AnyConnect 
+SSL VPN. It is marked as GNUTLS_DTLS0_9. Do not use it for newer protocols
+as it has issues.
+
+** libgnutls: Corrected bug that prevented resolving PKCS #11 URLs 
+if only the label is specified. Patch by David Woodhouse.
+
+** libgnutls: When EMSGSIZE errno is seen then GNUTLS_E_LARGE_PACKET
+is returned.
+
+** API and ABI modifications:
+gnutls_dtls_set_data_mtu: Added
+gnutls_session_set_premaster: Added
+
+
+* Version 3.0.20 (released 2012-06-05)
+
+** libgnutls: Corrected bug which prevented the parsing of
+handshake packets spanning multiple records.
+
+** libgnutls: Check key identifiers when checking for an issuer.
+
+** libgnutls: Added gnutls_pubkey_verify_hash2()
+
+** libgnutls: Added gnutls_certificate_set_x509_system_trust()
+that loads the trusted CA certificates from system locations
+(e.g. trusted storage in windows and CA bundle files in other systems).
+
+** certtool: Added support for the URI subject alternative
+name type in certtool.
+
+** certtool: Increase to 128 the maximum number of distinct options
+(e.g. dns_names) allowed.
+
+** gnutls-cli: If --print-cert is given, print the certificate, 
+even on verification failure.
+
+** API and ABI modifications:
+gnutls_pk_to_sign: Added
+gnutls_pubkey_verify_hash2: Added
+gnutls_certificate_set_x509_system_trust: Added
+
+
+* Version 3.0.19 (released 2012-04-22)
+
+** libgnutls: When decoding a PKCS #11 URL the pin-source field
+is assumed to be a file that stores the pin. Based on patch
+by David Smith.
+
+** libgnutls: gnutls_record_check_pending() no longer
+returns unprocessed data, and thus ensure the non-blocking
+of the next call to gnutls_record_recv(). 
+
+** libgnutls: Added strict tests in Diffie-Hellman and
+SRP key exchange public keys.
+
+** libgnutls: in ECDSA and DSA TLS 1.2 authentication be less
+strict in hash selection, and allow a stronger hash to
+be used than the appropriate, to improve interoperability
+with openssl.
+
+** tests: Disabled floating point test, and corrections
+in pkcs12 decoding tests.
+
+** API and ABI modifications:
+No changes since last version.
+
+
+* Version 3.0.18 (released 2012-04-02)
+
+** certtool: Avoid a Y2K38 bug when generating certificates.
+Patch by Robert Millan.
+
+** libgnutls: Make sure that GNUTLS_E_PREMATURE_TERMINATION
+is returned on premature termination (and added unit test).
+
+** libgnutls: Fixes for W64 API. Patch by B. Scott Michel.
+
+** libgnutls: Corrected VIA padlock detection for old 
+VIA processors. Reported by Kris Karas.
+
+** libgnutls: Updated assembler files.
+
+** libgnutls: Time in generated certificates is stored
+as GeneralizedTime instead of UTCTime (which only stores
+2 digits of a year).
+
+** minitasn1: Upgraded to libtasn1 version 2.13 (pre-release).
+
+** API and ABI modifications:
+gnutls_x509_crt_set_private_key_usage_period: Added
+gnutls_x509_crt_get_private_key_usage_period: Added
+gnutls_x509_crq_set_private_key_usage_period: Added
+gnutls_x509_crq_get_private_key_usage_period: Added
+gnutls_session_get_random: Added
+
+
+* Version 3.0.17 (released 2012-03-17)
+
+** command line apps: Always link with local libopts.
+
+** API and ABI modifications:
+No changes since last version.
+
+
+* Version 3.0.16 (released 2012-03-16)
+
+** minitasn1: Upgraded to libtasn1 version 2.12 (pre-release).
+
+** libgnutls: Corrected SRP-RSA ciphersuites when used under TLS 1.2.
+
+** libgnutls: included assembler files for MacOSX.
+
+** p11tool: Small fixes in handling of the --private command 
+line option.
+
+** certtool: The template option allows for setting the domain
+component (DC) option of the distinguished name, and the ocsp_uri
+as well as the ca_issuers_uri options.
+
+** API and ABI modifications:
+gnutls_x509_crt_set_authority_info_access: Added
+
+
+* Version 3.0.15 (released 2012-03-02)
+
+** test suite: Only run under valgrind in the development
+system (the full git repository)
+
+** command line apps: Link with local libopts if the 
+installed is an old one.
+
+** libgnutls: Eliminate double free during SRP
+authentication. Reported by Peter Penzov.
+
+** libgnutls: Corrections in record packet parsing.
+Reported by Matthew Hall.
+
+** libgnutls: Cryptodev updates and fixes.
+
+** libgnutls: Corrected issue with select() that affected
+FreeBSD. This prevented establishing DTLS sessions.
+Reported by Andreas Metzler.
+
+** libgnutls: Corrected rehandshake and resumption
+operations in DTLS. Reported by Sean Buckheister.
+
+** libgnutls: PKCS #11 objects that do not have ID
+no longer crash listing. Reported by Sven Geggus.
+
+** API and ABI modifications:
+No changes since last version.
+
+
 * Version 3.0.14 (released 2012-02-24)
 
 ** command line apps: Included libopts doesn't get installed

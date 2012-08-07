@@ -25,12 +25,12 @@
    non-IEEE-754 'long double' values. */
 #undef CHECK_PRINTF_SAFE
 
-/* Define to one of '_getb67', 'GETB67', 'getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for 'alloca.c' support on those systems.
+/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
+   systems. This function is required for `alloca.c' support on those systems.
    */
 #undef CRAY_STACKSEG_END
 
-/* Define to 1 if using 'alloca.c'. */
+/* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
 /* Define as the bit index in the word where to find bit 0 of the exponent of
@@ -45,6 +45,15 @@
 
 /* Define as the word index where to find the sign of 'double'. */
 #undef DBL_SIGNBIT_WORD
+
+/* use the given CRL file */
+#undef DEFAULT_CRL_FILE
+
+/* use the given file default trust store */
+#undef DEFAULT_TRUST_STORE_FILE
+
+/* use the given pkcs11 uri as default trust store */
+#undef DEFAULT_TRUST_STORE_PKCS11
 
 /* Define to 1 if // is a file system root distinct from /. */
 #undef DOUBLE_SLASH_IS_DISTINCT_ROOT
@@ -389,6 +398,9 @@
    the CoreFoundation framework. */
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 
+/* Define to 1 if you have the `chmod' function. */
+#undef HAVE_CHMOD
+
 /* Define to 1 if you have the `chsize' function. */
 #undef HAVE_CHSIZE
 
@@ -667,6 +679,9 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
+/* Define to 1 if you have the `fstat' function. */
+#undef HAVE_FSTAT
+
 /* Define to 1 if you have the `ftruncate' function. */
 #undef HAVE_FTRUNCATE
 
@@ -939,6 +954,15 @@
    macros. */
 #undef HAVE_RAW_DECL_CANONICALIZE_FILE_NAME
 
+/* Define to 1 if cbrt is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_CBRT
+
+/* Define to 1 if cbrtf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_CBRTF
+
+/* Define to 1 if cbrtl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_CBRTL
+
 /* Define to 1 if ceilf is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_CEILF
 
@@ -999,14 +1023,35 @@
 /* Define to 1 if euidaccess is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_EUIDACCESS
 
+/* Define to 1 if exp2 is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXP2
+
+/* Define to 1 if exp2f is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXP2F
+
+/* Define to 1 if exp2l is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXP2L
+
 /* Define to 1 if expf is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_EXPF
 
 /* Define to 1 if expl is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_EXPL
 
+/* Define to 1 if expm1 is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXPM1
+
+/* Define to 1 if expm1f is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXPM1F
+
+/* Define to 1 if expm1l is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_EXPM1L
+
 /* Define to 1 if fabsf is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_FABSF
+
+/* Define to 1 if fabsl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_FABSL
 
 /* Define to 1 if faccessat is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_FACCESSAT
@@ -1053,8 +1098,14 @@
 /* Define to 1 if fmal is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_FMAL
 
+/* Define to 1 if fmod is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_FMOD
+
 /* Define to 1 if fmodf is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_FMODF
+
+/* Define to 1 if fmodl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_FMODL
 
 /* Define to 1 if fpurge is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_FPURGE
@@ -1134,6 +1185,9 @@
 /* Define to 1 if getpeername is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_GETPEERNAME
 
+/* Define to 1 if gets is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_GETS
+
 /* Define to 1 if getsockname is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_GETSOCKNAME
 
@@ -1154,6 +1208,21 @@
 
 /* Define to 1 if group_member is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_GROUP_MEMBER
+
+/* Define to 1 if hypotf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_HYPOTF
+
+/* Define to 1 if hypotl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_HYPOTL
+
+/* Define to 1 if ilogb is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_ILOGB
+
+/* Define to 1 if ilogbf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_ILOGBF
+
+/* Define to 1 if ilogbl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_ILOGBL
 
 /* Define to 1 if imaxabs is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_IMAXABS
@@ -1200,11 +1269,44 @@
 /* Define to 1 if listen is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_LISTEN
 
+/* Define to 1 if log is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG
+
+/* Define to 1 if log10 is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG10
+
 /* Define to 1 if log10f is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_LOG10F
 
+/* Define to 1 if log10l is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG10L
+
+/* Define to 1 if log1p is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG1P
+
+/* Define to 1 if log1pf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG1PF
+
+/* Define to 1 if log1pl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG1PL
+
+/* Define to 1 if log2 is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG2
+
+/* Define to 1 if log2f is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG2F
+
+/* Define to 1 if log2l is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOG2L
+
 /* Define to 1 if logb is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_LOGB
+
+/* Define to 1 if logbf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOGBF
+
+/* Define to 1 if logbl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_LOGBL
 
 /* Define to 1 if logf is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_LOGF
@@ -1272,8 +1374,14 @@
 /* Define to 1 if mkstemps is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_MKSTEMPS
 
+/* Define to 1 if modf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_MODF
+
 /* Define to 1 if modff is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_MODFF
+
+/* Define to 1 if modfl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_MODFL
 
 /* Define to 1 if openat is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_OPENAT
@@ -1343,6 +1451,15 @@
 
 /* Define to 1 if recvfrom is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_RECVFROM
+
+/* Define to 1 if remainder is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_REMAINDER
+
+/* Define to 1 if remainderf is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_REMAINDERF
+
+/* Define to 1 if remainderl is declared even after undefining macros. */
+#undef HAVE_RAW_DECL_REMAINDERL
 
 /* Define to 1 if renameat is declared even after undefining macros. */
 #undef HAVE_RAW_DECL_RENAMEAT
@@ -1757,6 +1874,9 @@
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
 
+/* Define to 1 if you have the <stdbool.h> header file. */
+#undef HAVE_STDBOOL_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -1913,6 +2033,9 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #undef HAVE_TERMIOS_H
 
+/* Define to 1 if you have the `timer_settime' function. */
+#undef HAVE_TIMER_SETTIME
+
 /* Define to 1 if you have the `tsearch' function. */
 #undef HAVE_TSEARCH
 
@@ -2009,6 +2132,12 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if you have the `_fseeki64' function. */
+#undef HAVE__FSEEKI64
+
+/* Define to 1 if you have the `_ftelli64' function. */
+#undef HAVE__FTELLI64
+
 /* Define to 1 if you have the `_ftime' function. */
 #undef HAVE__FTIME
 
@@ -2099,6 +2228,9 @@
 /* Define if the vasnprintf implementation needs special code for supporting
    large precisions without arbitrary bounds. */
 #undef NEED_PRINTF_UNBOUNDED_PRECISION
+
+/* Define to 1 if your C compiler doesn't accept -c and -o together. */
+#undef NO_MINUS_C_MINUS_O
 
 /* Define this if optional arguments are disallowed */
 #undef NO_OPTIONAL_OPT_ARGS
@@ -2206,6 +2338,9 @@
 /* The size of `long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
+/* The size of `long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
+
 /* The size of `short', as computed by sizeof. */
 #undef SIZEOF_SHORT
 
@@ -2231,9 +2366,9 @@
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
    automatically deduced at runtime.
-        STACK_DIRECTION > 0 => grows toward higher addresses
-        STACK_DIRECTION < 0 => grows toward lower addresses
-        STACK_DIRECTION = 0 => direction of growth unknown */
+	STACK_DIRECTION > 0 => grows toward higher addresses
+	STACK_DIRECTION < 0 => grows toward lower addresses
+	STACK_DIRECTION = 0 => direction of growth unknown */
 #undef STACK_DIRECTION
 
 /* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
@@ -2301,13 +2436,17 @@
 # endif
 #endif
 
-/* Enable large inode numbers on Mac OS X.  */
+/* Enable large inode numbers on Mac OS X 10.5.  */
 #ifndef _DARWIN_USE_64_BIT_INODE
 # define _DARWIN_USE_64_BIT_INODE 1
 #endif
 
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
+
+/* Define to 1 if Gnulib overrides 'struct stat' on Windows so that struct
+   stat.st_size becomes 64-bit. */
+#undef _GL_WINDOWS_64_BIT_ST_SIZE
 
 /* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
 #undef _LARGEFILE_SOURCE
@@ -2319,7 +2458,8 @@
 #undef _MINIX
 
 /* The _Noreturn keyword of C11.  */
-#ifndef _Noreturn
+#if ! (defined _Noreturn \
+       || (defined __STDC_VERSION__ && 201112 <= __STDC_VERSION__))
 # if (3 <= __GNUC__ || (__GNUC__ == 2 && 8 <= __GNUC_MINOR__) \
       || 0x5110 <= __SUNPRO_C)
 #  define _Noreturn __attribute__ ((__noreturn__))

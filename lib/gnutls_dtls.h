@@ -24,30 +24,27 @@
 # define DTLS_H
 
 #include <config.h>
-#include "gnutls_int.h"
-#include "gnutls_buffers.h"
-#include "gnutls_mbuffers.h"
+#include <gnutls_int.h>
+#include <gnutls_buffers.h>
+#include <gnutls_mbuffers.h>
+#include <gnutls_constate.h>
 #include <timespec.h>
 
 int _dtls_transmit(gnutls_session_t session);
 int _dtls_retransmit(gnutls_session_t session);
 int _dtls_record_check(struct record_parameters_st *rp, uint64 * _seq);
+void _dtls_reset_hsk_state(gnutls_session_t session);
 
 #define MAX_DTLS_TIMEOUT 60000
 
-/* returns a-b in ms */
-inline static unsigned int timespec_sub_ms(struct timespec *a, struct timespec *b)
-{
-  return (a->tv_sec * 1000 + a->tv_nsec / (1000 * 1000) -
-          (b->tv_sec * 1000 + b->tv_nsec / (1000 * 1000)));
-}
+unsigned int _dtls_timespec_sub_ms (struct timespec *a, struct timespec *b);
 
 #define RETURN_DTLS_EAGAIN_OR_TIMEOUT(session, r) { \
   struct timespec now; \
   unsigned int diff; \
   gettime(&now); \
    \
-  diff = timespec_sub_ms(&now, &session->internals.dtls.handshake_start_time); \
+  diff = _dtls_timespec_sub_ms(&now, &session->internals.dtls.handshake_start_time); \
   if (diff > session->internals.dtls.total_timeout_ms) \
     { \
       _gnutls_dtls_log("Session timeout: %u ms\n", diff); \
@@ -87,18 +84,15 @@ inline static void _dtls_async_timer_init(gnutls_session_t session)
       session->internals.dtls.async_term = gnutls_time(0) + MAX_DTLS_TIMEOUT/1000;
     }
   else
-    session->internals.dtls.async_term = 0;
-}
-
-inline static void _dtls_async_timer_delete(gnutls_session_t session)
-{
-  if (session->internals.dtls.async_term != 0)
     {
-      _gnutls_dtls_log ("DTLS[%p]: Deinitializing handshake state.\n", session);
+      _dtls_reset_hsk_state(session);
       _gnutls_handshake_io_buffer_clear (session);
-      session->internals.dtls.async_term = 0; /* turn off "timer" */
+      _gnutls_epoch_gc(session);
+      session->internals.dtls.async_term = 0;
     }
 }
+
+void _dtls_async_timer_delete(gnutls_session_t session);
 
 /* Checks whether it is time to terminate the timer
  */

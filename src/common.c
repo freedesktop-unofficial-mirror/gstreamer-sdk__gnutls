@@ -51,10 +51,10 @@ raw_to_string (const unsigned char *raw, size_t raw_size)
     static char buf[1024];
     size_t i;
     if (raw_size == 0)
-        return NULL;
+        return "(empty)";
 
     if (raw_size * 3 + 1 >= sizeof (buf))
-        return NULL;
+        return "(too large)";
 
     for (i = 0; i < raw_size; i++)
       {
@@ -139,6 +139,7 @@ print_x509_info (gnutls_session_t session, int flag, int print_cert)
             }
 
           printf ("- Certificate[%d] info:\n - ", j);
+          if (flag == GNUTLS_CRT_PRINT_COMPACT && j > 0) flag = GNUTLS_CRT_PRINT_ONELINE;
 
           ret =
             gnutls_x509_crt_print (crt, flag, &cinfo);
@@ -218,18 +219,21 @@ verify_x509_hostname (gnutls_session_t session, const char *hostname)
   /* Check the hostname of the first certificate if it matches
    * the name of the host we connected to.
    */
-  if (gnutls_x509_crt_check_hostname (crt, hostname) == 0)
+  if (hostname != NULL)
     {
-      printf
+      if (gnutls_x509_crt_check_hostname (crt, hostname) == 0)
+        {
+          printf
              ("- The hostname in the certificate does NOT match '%s'\n",
               hostname);
-      ret = 0;
-    }
-  else
-    {
-      printf ("- The hostname in the certificate matches '%s'.\n",
-              hostname);
-      ret = 1;
+          ret = 0;
+        }
+      else
+        {
+          printf ("- The hostname in the certificate matches '%s'.\n",
+                  hostname);
+          ret = 1;
+        }
     }
 
   gnutls_x509_crt_deinit (crt);
@@ -648,9 +652,7 @@ print_info (gnutls_session_t session, int print_cert)
                 }
           }
 
-          print_cert_info (session, 
-                           verbose?GNUTLS_CRT_PRINT_FULL:GNUTLS_CRT_PRINT_COMPACT, 
-                           print_cert);
+          print_cert_info (session, verbose, print_cert);
 
           if (kx == GNUTLS_KX_DHE_RSA || kx == GNUTLS_KX_DHE_DSS)
               print_dh_info (session, "Ephemeral ", verbose);
@@ -709,8 +711,12 @@ print_info (gnutls_session_t session, int print_cert)
 }
 
 void
-print_cert_info (gnutls_session_t session, int flag, int print_cert)
+print_cert_info (gnutls_session_t session, int verbose, int print_cert)
 {
+int flag;
+
+    if (verbose) flag = GNUTLS_CRT_PRINT_FULL;
+    else flag = GNUTLS_CRT_PRINT_COMPACT;
 
     if (gnutls_certificate_client_get_request_status (session) != 0)
         printf ("- Server has requested a certificate.\n");
@@ -1029,3 +1035,19 @@ print_list (const char *priorities, int verbose)
     }
 }
 
+int check_command(gnutls_session_t session, const char* str)
+{
+int len = strlen(str);
+
+  if (len > 2 && str[0] == str[1] && str[0] == '*')
+    {
+      if (strncmp(str, "**REHANDSHAKE**",
+          sizeof ("**REHANDSHAKE**") - 1) == 0)
+        {
+          fprintf (stderr, "*** Sending rehandshake request\n");
+                   gnutls_rehandshake (session);
+          return 1;
+        }
+    }
+  return 0;
+}

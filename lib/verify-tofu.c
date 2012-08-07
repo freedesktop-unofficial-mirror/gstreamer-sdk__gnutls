@@ -105,7 +105,7 @@ struct gnutls_tdb_int default_tdb = {
  * Since: 3.0
  **/
 int
-gnutls_verify_stored_pubkey(const char* db_name, 
+gnutls_verify_stored_pubkey(const char* db_name,
                             gnutls_tdb_t tdb,
                             const char* host,
                             const char* service,
@@ -440,6 +440,7 @@ cleanup:
 
 static int pgp_crt_to_raw_pubkey(const gnutls_datum_t * cert, gnutls_datum_t *rpubkey)
 {
+#ifdef ENABLE_OPENPGP
 gnutls_openpgp_crt_t crt = NULL;
 gnutls_pubkey_t pubkey = NULL;
 size_t size;
@@ -503,6 +504,9 @@ cleanup:
   gnutls_pubkey_deinit(pubkey);
 
   return ret;
+#else
+  return GNUTLS_E_UNIMPLEMENTED_FEATURE;
+#endif
 }
 
 static 
@@ -599,12 +603,12 @@ char buffer[MAX_HASH_SIZE*2+1];
  * Since: 3.0
  **/
 int
-gnutls_store_pubkey(const char* db_name, 
+gnutls_store_pubkey(const char* db_name,
                     gnutls_tdb_t tdb,
                     const char* host,
                     const char* service,
                     gnutls_certificate_type_t cert_type,
-                    const gnutls_datum_t * cert, 
+                    const gnutls_datum_t * cert,
                     time_t expiration,
                     unsigned int flags)
 {
@@ -684,7 +688,7 @@ cleanup:
  * Since: 3.0
  **/
 int
-gnutls_store_commitment(const char* db_name, 
+gnutls_store_commitment(const char* db_name,
                     gnutls_tdb_t tdb,
                     const char* host,
                     const char* service,

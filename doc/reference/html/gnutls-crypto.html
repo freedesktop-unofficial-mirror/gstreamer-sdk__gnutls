@@ -63,7 +63,7 @@
 typedef             <a class="link" href="gnutls-crypto.html#gnutls-hash-hd-t" title="gnutls_hash_hd_t">gnutls_hash_hd_t</a>;
 typedef             <a class="link" href="gnutls-crypto.html#gnutls-hmac-hd-t" title="gnutls_hmac_hd_t">gnutls_hmac_hd_t</a>;
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-crypto.html#gnutls-hmac-init" title="gnutls_hmac_init ()">gnutls_hmac_init</a>                    (<em class="parameter"><code><a class="link" href="gnutls-crypto.html#gnutls-hmac-hd-t" title="gnutls_hmac_hd_t"><span class="type">gnutls_hmac_hd_t</span></a> *dig</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-digest-algorithm-t" title="enum gnutls_digest_algorithm_t"><span class="type">gnutls_digest_algorithm_t</span></a> algorithm</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-mac-algorithm-t" title="enum gnutls_mac_algorithm_t"><span class="type">gnutls_mac_algorithm_t</span></a> algorithm</code></em>,
                                                          <em class="parameter"><code>const <span class="type">void</span> *key</code></em>,
                                                          <em class="parameter"><code><span class="type">size_t</span> keylen</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-crypto.html#gnutls-hmac" title="gnutls_hmac ()">gnutls_hmac</a>                         (<em class="parameter"><code><a class="link" href="gnutls-crypto.html#gnutls-hmac-hd-t" title="gnutls_hmac_hd_t"><span class="type">gnutls_hmac_hd_t</span></a> handle</code></em>,
@@ -365,7 +365,7 @@ Get block size for encryption algorithm.
 <div class="refsect2">
 <a name="gnutls-hmac-init"></a><h3>gnutls_hmac_init ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>                 gnutls_hmac_init                    (<em class="parameter"><code><a class="link" href="gnutls-crypto.html#gnutls-hmac-hd-t" title="gnutls_hmac_hd_t"><span class="type">gnutls_hmac_hd_t</span></a> *dig</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-digest-algorithm-t" title="enum gnutls_digest_algorithm_t"><span class="type">gnutls_digest_algorithm_t</span></a> algorithm</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-mac-algorithm-t" title="enum gnutls_mac_algorithm_t"><span class="type">gnutls_mac_algorithm_t</span></a> algorithm</code></em>,
                                                          <em class="parameter"><code>const <span class="type">void</span> *key</code></em>,
                                                          <em class="parameter"><code><span class="type">size_t</span> keylen</code></em>);</pre>
 <p>

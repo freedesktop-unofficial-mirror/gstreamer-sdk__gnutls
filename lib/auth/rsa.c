@@ -46,18 +46,18 @@ static int proc_rsa_client_kx (gnutls_session_t, uint8_t *, size_t);
 
 const mod_auth_st rsa_auth_struct = {
   "RSA",
-  _gnutls_gen_cert_server_certificate,
-  _gnutls_gen_cert_client_certificate,
+  _gnutls_gen_cert_server_crt,
+  _gnutls_gen_cert_client_crt,
   NULL,                         /* gen server kx */
   _gnutls_gen_rsa_client_kx,
-  _gnutls_gen_cert_client_cert_vrfy,    /* gen client cert vrfy */
+  _gnutls_gen_cert_client_crt_vrfy,    /* gen client cert vrfy */
   _gnutls_gen_cert_server_cert_req,     /* server cert request */
 
-  _gnutls_proc_certificate,
-  _gnutls_proc_certificate,
+  _gnutls_proc_crt,
+  _gnutls_proc_crt,
   NULL,                         /* proc server kx */
   proc_rsa_client_kx,           /* proc client kx */
-  _gnutls_proc_cert_client_cert_vrfy,   /* proc client cert vrfy */
+  _gnutls_proc_cert_client_crt_vrfy,   /* proc client cert vrfy */
   _gnutls_proc_cert_cert_req    /* proc server cert request */
 };
 

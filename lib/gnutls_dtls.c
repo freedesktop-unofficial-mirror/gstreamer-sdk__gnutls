@@ -35,6 +35,29 @@
 #include <gnutls_state.h>
 #include <gnutls/dtls.h>
 #include <timespec.h>
+#include <algorithms.h>
+
+/* returns a-b in ms */
+unsigned int
+_dtls_timespec_sub_ms (struct timespec *a, struct timespec *b)
+{
+  return (a->tv_sec * 1000 + a->tv_nsec / (1000 * 1000) -
+          (b->tv_sec * 1000 + b->tv_nsec / (1000 * 1000)));
+}
+
+void
+_dtls_async_timer_delete (gnutls_session_t session)
+{
+  if (session->internals.dtls.async_term != 0)
+    {
+      _gnutls_dtls_log ("DTLS[%p]: Deinitializing previous handshake state.\n", session);
+      session->internals.dtls.async_term = 0; /* turn off "timer" */
+
+      _dtls_reset_hsk_state(session);
+      _gnutls_handshake_io_buffer_clear (session);
+      _gnutls_epoch_gc(session);
+    }
+}
 
 /* This function fragments and transmits a previously buffered
  * outgoing message. It accepts mtu_data which is a buffer to
@@ -170,6 +193,14 @@ int ret;
     return gnutls_assert_val(GNUTLS_E_UNEXPECTED_HANDSHAKE_PACKET);
 }
 
+void _dtls_reset_hsk_state(gnutls_session_t session)
+{
+  session->internals.dtls.flight_init = 0;
+  drop_usage_count(session, &session->internals.handshake_send_buffer);
+  _mbuffer_head_clear(&session->internals.handshake_send_buffer);
+}
+
+
 #define UPDATE_TIMER { \
       session->internals.dtls.actual_retrans_timeout_ms *= 2; \
       session->internals.dtls.actual_retrans_timeout_ms %= MAX_DTLS_TIMEOUT; \
@@ -225,7 +256,7 @@ unsigned int timeout;
             {
               /* if no retransmission is required yet just return 
                */
-              if (timespec_sub_ms(&now, &session->internals.dtls.last_retransmit) < TIMER_WINDOW)
+              if (_dtls_timespec_sub_ms(&now, &session->internals.dtls.last_retransmit) < TIMER_WINDOW)
                 {
                   gnutls_assert();
                   goto nb_timeout;
@@ -256,7 +287,7 @@ unsigned int timeout;
     {
       timeout = TIMER_WINDOW;
 
-      diff = timespec_sub_ms(&now, &session->internals.dtls.handshake_start_time);
+      diff = _dtls_timespec_sub_ms(&now, &session->internals.dtls.handshake_start_time);
       if (diff >= session->internals.dtls.total_timeout_ms) 
         {
           _gnutls_dtls_log("Session timeout: %u ms\n", diff);
@@ -264,7 +295,7 @@ unsigned int timeout;
           goto end_flight;
         }
 
-      diff = timespec_sub_ms(&now, &session->internals.dtls.last_retransmit);
+      diff = _dtls_timespec_sub_ms(&now, &session->internals.dtls.last_retransmit);
       if (session->internals.dtls.flight_init == 0 || diff >= TIMER_WINDOW)
         {
           _gnutls_dtls_log ("DTLS[%p]: %sStart of flight transmission.\n", session,  (session->internals.dtls.flight_init == 0)?"":"re-");
@@ -370,10 +401,7 @@ keep_up:
 
 end_flight:
   _gnutls_dtls_log ("DTLS[%p]: End of flight transmission.\n", session);
-
-  session->internals.dtls.flight_init = 0;
-  drop_usage_count(session, send_buffer);
-  _mbuffer_head_clear(send_buffer);
+  _dtls_reset_hsk_state(session);
 
 cleanup:
   if (buf != NULL)
@@ -542,16 +570,73 @@ void gnutls_dtls_set_timeouts (gnutls_session_t session, unsigned int retrans_ti
 /**
  * gnutls_dtls_set_mtu:
  * @session: is a #gnutls_session_t structure.
- * @mtu: The maximum transfer unit of the interface
+ * @mtu: The maximum transfer unit of the transport
  *
- * This function will set the maximum transfer unit of the interface
- * that DTLS packets are expected to leave from.
+ * This function will set the maximum transfer unit of the transport
+ * that DTLS packets are sent over. Note that this should exclude
+ * the IP (or IPv6) and UDP headers. So for DTLS over IPv6 on an
+ * Ethenet device with MTU 1500, the DTLS MTU set with this function
+ * would be 1500 - 40 (IPV6 header) - 8 (UDP header) = 1452.
  *
  * Since: 3.0
  **/
 void gnutls_dtls_set_mtu (gnutls_session_t session, unsigned int mtu)
 {
   session->internals.dtls.mtu  = mtu;
+}
+
+/* returns overhead imposed by the record layer (encryption/compression)
+ * etc. It does not include the record layer headers, since the caller
+ * needs to cope with rounding to multiples of blocksize, and the header
+ * is outside that.
+ *
+ * blocksize: will contain the block size when padding may be required or 1
+ *
+ * It may return a negative error code on error.
+ */
+static int record_overhead_rt(gnutls_session_t session, unsigned int *blocksize)
+{
+record_parameters_st *params;
+int total = 0, ret, iv_size;
+
+  if (session->internals.initial_negotiation_completed == 0)
+    return GNUTLS_E_INVALID_REQUEST;
+
+  ret = _gnutls_epoch_get (session, EPOCH_WRITE_CURRENT, &params);
+  if (ret < 0)
+    return gnutls_assert_val(ret);
+
+  /* requires padding */
+  iv_size = _gnutls_cipher_get_iv_size(params->cipher_algorithm);
+
+  if (_gnutls_cipher_is_block (params->cipher_algorithm) == CIPHER_BLOCK)
+    {
+      *blocksize = iv_size;
+
+      total += iv_size; /* iv_size == block_size in DTLS */
+
+      /* We always pad with at least one byte; never 0. */
+      total++;
+    }
+  else
+    {
+      *blocksize = 1;
+    }
+  
+  if (params->mac_algorithm == GNUTLS_MAC_AEAD)
+    total += _gnutls_cipher_get_tag_size(params->cipher_algorithm);
+  else
+    {
+      ret = _gnutls_hmac_get_algo_len(params->mac_algorithm);
+      if (ret < 0)
+        return gnutls_assert_val(ret);
+      total+=ret;
+    }
+
+  if (params->compression_algorithm != GNUTLS_COMP_NULL)
+    total += EXTRA_COMP_SIZE;
+
+  return total;
 }
 
 /**
@@ -568,13 +653,60 @@ void gnutls_dtls_set_mtu (gnutls_session_t session, unsigned int mtu)
  **/
 unsigned int gnutls_dtls_get_data_mtu (gnutls_session_t session)
 {
-int ret;
+int mtu = session->internals.dtls.mtu;
+unsigned int blocksize = 1;
+int overhead;
+ 
+  mtu -= RECORD_HEADER_SIZE(session);
 
-  ret = _gnutls_record_overhead_rt(session);
-  if (ret >= 0)
-    return session->internals.dtls.mtu - ret;
-  else
-    return session->internals.dtls.mtu - RECORD_HEADER_SIZE(session);
+  overhead = record_overhead_rt(session, &blocksize);
+  if (overhead < 0)
+    return mtu;
+
+  if (blocksize)
+    mtu -= mtu % blocksize;
+
+  return mtu - overhead;
+}
+
+/**
+ * gnutls_dtls_set_data_mtu:
+ * @session: is a #gnutls_session_t structure.
+ * @mtu: The maximum unencrypted transfer unit of the session
+ *
+ * This function will set the maximum size of the *unencrypted* records
+ * which will be sent over a DTLS session. It is equivalent to calculating
+ * the DTLS packet overhead with the current encryption parameters, and
+ * calling gnutls_dtls_set_mtu() with that value. In particular, this means
+ * that you may need to call this function again after any negotiation or
+ * renegotiation, in order to ensure that the MTU is still sufficient to
+ * account for the new protocol overhead.
+ *
+ * Returns: %GNUTLS_E_SUCCESS (0) on success, or a negative error code.
+ *
+ * Since: 3.1
+ **/
+int gnutls_dtls_set_data_mtu (gnutls_session_t session, unsigned int mtu)
+{
+  unsigned int blocksize;
+  int overhead = record_overhead_rt(session, &blocksize);
+
+  /* You can't call this until the session is actually running */
+  if (overhead < 0)
+	  return GNUTLS_E_INVALID_SESSION;
+
+  /* Add the overhead inside the encrypted part */
+  mtu += overhead;
+
+  /* Round it up to the next multiple of blocksize */
+  mtu += blocksize - 1;
+  mtu -= mtu % blocksize;
+
+  /* Add the *unencrypted header size */
+  mtu += RECORD_HEADER_SIZE(session);
+
+  gnutls_dtls_set_mtu(session, mtu);
+  return GNUTLS_E_SUCCESS;
 }
 
 /**
@@ -616,7 +748,7 @@ unsigned int diff;
 
   gettime(&now);
   
-  diff = timespec_sub_ms(&now, &session->internals.dtls.last_retransmit);
+  diff = _dtls_timespec_sub_ms(&now, &session->internals.dtls.last_retransmit);
   if (diff >= TIMER_WINDOW)
     return 0;
   else

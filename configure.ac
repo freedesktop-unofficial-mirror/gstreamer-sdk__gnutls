@@ -21,11 +21,11 @@ dnl Process this file with autoconf to produce a configure script.
 # USA
 
 AC_PREREQ(2.61)
-AC_INIT([GnuTLS], [3.0.14], [bug-gnutls@gnu.org])
+AC_INIT([GnuTLS], [3.0.22], [bug-gnutls@gnu.org])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz -Wall -Werror -Wno-override])
+AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz dist-lzip -Wall -Werror -Wno-override])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 AM_CONFIG_HEADER(config.h)
 
@@ -67,11 +67,17 @@ case "$host" in
   *mingw32* | *mingw64*)
     have_win=yes
   ;;
+  *darwin*)
+    have_macosx=yes
+  ;;
   *)
+    have_elf=yes
   ;;
 esac
 
 AM_CONDITIONAL(WINDOWS, test "$have_win" = yes)
+AM_CONDITIONAL(MACOSX, test "$have_macosx" = yes)
+AM_CONDITIONAL(ELF, test "$have_elf" = yes)
 
 dnl Hardware Acceleration
 AC_ARG_ENABLE(hardware-acceleration,
@@ -118,7 +124,7 @@ AC_C_BIGENDIAN
 
 
 dnl No fork on MinGW, disable some self-tests until we fix them.
-AC_CHECK_FUNCS([fork getrusage getpwuid_r daemon fchmod],,)
+AC_CHECK_FUNCS([fork getrusage getpwuid_r daemon],,)
 AM_CONDITIONAL(HAVE_FORK, test "$ac_cv_func_fork" != "no")
 AC_LIB_HAVE_LINKFLAGS(pthread,, [#include <pthread.h>], [pthread_mutex_lock (0);])
 
@@ -147,7 +153,9 @@ fi
 
 AM_CONDITIONAL(ENABLE_PKCS11, test "$with_p11_kit" != "no")
 
-dnl Checks for programs in src/ 
+enable_local_libopts=yes
+dnl PKG_CHECK_MODULES([autoopts], autoopts >= 36.2.11,, [enable_local_libopts=yes])
+
 NEED_LIBOPTS_DIR=true
 LIBOPTS_CHECK([src/libopts])
 
@@ -271,6 +279,51 @@ dnl Programs for compilation or development
 AC_PROG_LN_S
 AC_LIBTOOL_WIN32_DLL
 AC_PROG_LIBTOOL
+
+AC_ARG_WITH([default-trust-store-pkcs11],
+  [AS_HELP_STRING([--with-default-trust-store-pkcs11=URI],
+    [use the given pkcs11 uri as default trust store])])
+
+if test "x$with_default_trust_store_pkcs11" != x; then
+  if test "x$with_p11_kit" = xno; then
+    AC_MSG_ERROR([cannot use pkcs11 store without p11-kit])
+  fi
+  AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE_PKCS11],
+    ["$with_default_trust_store_pkcs11"], [use the given pkcs11 uri as default trust store])
+fi
+
+AC_ARG_WITH([default-trust-store-file],
+  [AS_HELP_STRING([--with-default-trust-store-file=FILE],
+    [use the given file default trust store])])
+
+AC_ARG_WITH([default-crl-file],
+  [AS_HELP_STRING([--with-default-crl-file=FILE],
+    [use the given CRL file as default])])
+
+if test "x$with_default_trust_store_pkcs11" = x -a "x$with_default_trust_store_file" = x; then
+  # auto detect http://lists.gnu.org/archive/html/help-gnutls/2012-05/msg00004.html
+  for i in \
+    /etc/ssl/certs/ca-certificates.crt \
+    /etc/pki/tls/cert.pem \
+    /usr/local/share/certs/ca-root-nss.crt \
+    /etc/ssl/cert.pem
+    do
+    if test -e $i; then
+      with_default_trust_store_file="$i"
+      break
+    fi
+  done
+fi
+
+if test "x$with_default_trust_store_file" != x; then
+  AC_DEFINE_UNQUOTED([DEFAULT_TRUST_STORE_FILE],
+    ["$with_default_trust_store_file"], [use the given file default trust store])
+fi
+
+if test "x$with_default_crl_file" != x; then
+  AC_DEFINE_UNQUOTED([DEFAULT_CRL_FILE],
+    ["$with_default_crl_file"], [use the given CRL file])
+fi
 
 dnl Guile bindings.
 opt_guile_bindings=yes
@@ -401,7 +454,14 @@ AC_CHECK_FUNCS([alarm atexit dup2 epoll_create kqueue memchr memset munmap \
 		putenv regcomp scandir select socket strcasecmp strchr \
 		strdup strerror strncasecmp strrchr strstr strtoul uname])
 
-PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+AC_ARG_ENABLE(crywrap,
+	AS_HELP_STRING([--disable-crywrap], [unconditionally disable the crywrap TLS proxy service]))
+
+ libidn=no
+
+ if test "x$enable_crywrap" != "xno" ; then
+	PKG_CHECK_MODULES(LIBIDN, libidn >= 0.0.0, [libidn=yes], [libidn=no])
+ fi
 
  if test "x$libidn" != "xno" && test "$ac_cv_func_daemon" != "no";then
   crywrap=yes
@@ -459,6 +519,7 @@ AC_CONFIG_FILES([
   tests/cert-tests/Makefile
   tests/dsa/Makefile
   tests/dtls/Makefile
+  tests/srp/Makefile
   tests/ecdsa/Makefile
   tests/key-id/Makefile
   tests/openpgp-certs/Makefile
@@ -497,11 +558,16 @@ if features are disabled)
   SRP support:      $ac_enable_srp
   PSK support:      $ac_enable_psk
   Anon auth support:$ac_enable_anon
+
+  Trust store pkcs: $with_default_trust_store_pkcs11
+  Trust store file: $with_default_trust_store_file
+  CRL file: $with_default_crl_file
 ])
 
 AC_MSG_NOTICE([Optional applications:
 
   crywrap app:      $libidn
+  local libopts:    $enable_local_libopts
 ])
 
 AC_MSG_NOTICE([Optional libraries:

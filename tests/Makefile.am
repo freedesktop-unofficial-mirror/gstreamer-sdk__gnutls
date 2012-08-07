@@ -21,7 +21,7 @@
 
 SUBDIRS = . rsa-md5-collision pkcs1-padding pkcs8-decode pkcs12-decode	\
 	userid cert-tests key-id sha2 safe-renegotiation dsa scripts ecdsa \
-	slow dtls
+	slow dtls srp
 
 if ENABLE_OPENPGP
 SUBDIRS += openpgp-certs
@@ -65,9 +65,10 @@ ctests = mini-deflate simple gc set_pkcs12_cred certder certuniqueid	\
 	 crq_key_id x509sign-verify cve-2009-1415 cve-2009-1416		\
 	 crq_apis init_roundtrip pkcs12_s2k_pem dn2 mini-eagain		\
 	 nul-in-x509-names x509_altname pkcs12_encode mini-x509		\
-	 mini-x509-rehandshake rng-fork mini-eagain-dtls mini-loss	\
+	 mini-rehandshake rng-fork mini-eagain-dtls resume-dtls \
 	 x509cert x509cert-tl infoaccess rsa-encrypt-decrypt \
-	 mini-loss-time mini-tdb
+	 mini-loss-time mini-tdb mini-dtls-rehandshake mini-record \
+	 mini-termination mini-x509-cas
 
 if ENABLE_OCSP
 ctests += ocsp
@@ -98,6 +99,7 @@ dist_check_SCRIPTS = rfc2253-escape-test
 TESTS = $(ctests) $(dist_check_SCRIPTS)
 
 TESTS_ENVIRONMENT =						\
+	CAFILE=$(srcdir)/cert-tests/ca-certs.pem		\
 	PKCS12FILE=$(srcdir)/pkcs12-decode/client.p12		\
 	PKCS12PASSWORD=foobar					\
 	PKCS12FILE_2=$(srcdir)/pkcs12-decode/pkcs12_2certs.p12	\
@@ -105,7 +107,7 @@ TESTS_ENVIRONMENT =						\
 	EXEEXT=$(EXEEXT)					\
 	srcdir="$(srcdir)"
 
-if !WINDOWS
+if WANT_TEST_SUITE
 TESTS_ENVIRONMENT +=						\
 	$(VALGRIND)
 endif

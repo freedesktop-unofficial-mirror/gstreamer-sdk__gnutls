@@ -82,6 +82,7 @@ typedef struct
 } uint64;
 
 #include <gnutls/gnutls.h>
+#include <gnutls/dtls.h>
 #include <gnutls/abstract.h>
 #include <system.h>
 
@@ -174,7 +175,7 @@ typedef enum transport_t
 #define RECORD_HEADER_SIZE(session) (IS_DTLS(session) ? DTLS_RECORD_HEADER_SIZE : TLS_RECORD_HEADER_SIZE)
 #define MAX_RECORD_HEADER_SIZE DTLS_RECORD_HEADER_SIZE
 
-#define MAX_RECORD_SEND_SIZE(session) (IS_DTLS(session)?((size_t)session->internals.dtls.mtu-DTLS_RECORD_HEADER_SIZE):(size_t)session->security_parameters.max_record_send_size)
+#define MAX_RECORD_SEND_SIZE(session) (IS_DTLS(session)?((size_t)gnutls_dtls_get_data_mtu(session)):(size_t)session->security_parameters.max_record_send_size)
 #define MAX_RECORD_RECV_SIZE(session) ((size_t)session->security_parameters.max_record_recv_size)
 #define MAX_PAD_SIZE 255
 #define EXTRA_COMP_SIZE 2048
@@ -396,7 +397,7 @@ struct gnutls_key_st
 
   auth_cred_st *cred;           /* used to specify keys/certificates etc */
 
-  int certificate_requested;
+  int crt_requested;
   /* some ciphersuites use this
    * to provide client authentication.
    * 1 if client auth was requested
@@ -654,7 +655,7 @@ typedef union
 
 typedef struct
 {
-  /* holds all the data received by the record layer */
+  /* holds all the parsed data received by the record layer */
   mbuffer_head_st record_buffer; 
 
   int handshake_hash_buffer_prev_len;           /* keeps the length of handshake_hash_buffer, excluding
@@ -702,7 +703,7 @@ typedef struct
   /* this buffer holds a record packet -mostly used for
    * non blocking IO.
    */
-  mbuffer_head_st record_recv_buffer;   /* buffer holding the record that is currently 
+  mbuffer_head_st record_recv_buffer;   /* buffer holding the unparsed record that is currently 
                                          * being received */
   mbuffer_head_st record_send_buffer;   /* holds cached data
                                          * for the gnutls_io_write_buffered()
@@ -863,6 +864,10 @@ typedef struct
 
   /* DTLS session state */
   dtls_st dtls;
+  
+  /* if set it means that the master key was set using
+   * gnutls_session_set_master() rather than being negotiated. */
+  unsigned int premaster_set:1;
 
   unsigned int cb_tls_unique_len;
   unsigned char cb_tls_unique[MAX_VERIFY_DATA_SIZE];

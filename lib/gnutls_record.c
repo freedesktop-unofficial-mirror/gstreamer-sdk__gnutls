@@ -384,7 +384,14 @@ _gnutls_send_int (gnutls_session_t session, content_type_t type,
      _gnutls_packet2str (type), type, (int) data_size);
 
   if (data_size > MAX_RECORD_SEND_SIZE(session))
-    send_data_size = MAX_RECORD_SEND_SIZE(session);
+    {
+      if (IS_DTLS(session))
+        {
+          gnutls_assert ();
+          return GNUTLS_E_LARGE_PACKET;
+        }
+      send_data_size = MAX_RECORD_SEND_SIZE(session);
+    }
   else
     send_data_size = data_size;
 
@@ -458,12 +465,14 @@ _gnutls_send_int (gnutls_session_t session, content_type_t type,
 
   session->internals.record_send_buffer_user_size = 0;
 
-  _gnutls_record_log ("REC[%p]: Sent Packet[%d] %s(%d) with length: %d\n",
+  _gnutls_record_log ("REC[%p]: Sent Packet[%d] %s(%d) in epoch %d and length: %d\n",
                       session,
                       (unsigned int)
                       _gnutls_uint64touint32
                       (&record_state->sequence_number),
-                      _gnutls_packet2str (type), type, (int) cipher_size);
+                      _gnutls_packet2str (type), type, 
+                      (int) record_params->epoch,
+                      (int) cipher_size);
 
   return retval;
 }
@@ -688,13 +697,22 @@ record_add_to_buffers (gnutls_session_t session,
                 
               if (_dtls_is_async(session) && _dtls_async_timer_active(session))
                 {
-                  ret = _dtls_retransmit(session);
-                  if (ret == 0) 
+                  if (session->security_parameters.entity == GNUTLS_SERVER &&
+                      bufel->htype == GNUTLS_HANDSHAKE_CLIENT_HELLO)
                     {
-                      ret = gnutls_assert_val(GNUTLS_E_AGAIN);
-                      goto unexpected_packet;
+                      /* client requested rehandshake. Delete the timer */
+                      _dtls_async_timer_delete(session);
                     }
-                  goto cleanup;
+                  else
+                    {
+                      ret = _dtls_retransmit(session);
+                      if (ret == 0) 
+                        {
+                          ret = gnutls_assert_val(GNUTLS_E_AGAIN);
+                          goto unexpected_packet;
+                        }
+                      goto cleanup;
+                    }
                 }
             }
 
@@ -831,10 +849,10 @@ record_read_headers (gnutls_session_t session,
           record->epoch = 0;
         }
 
-      _gnutls_record_log ("REC[%p]: SSL %d.%d %s packet received. Length: %d\n",
+      _gnutls_record_log ("REC[%p]: SSL %d.%d %s packet received. Epoch %d, length: %d\n",
                           session, (int)record->version[0], (int)record->version[1], 
                           _gnutls_packet2str (record->type),
-                          record->length);
+                          (int)record->epoch, record->length);
 
     }
 
@@ -854,12 +872,14 @@ gnutls_datum_t raw; /* raw headers */
   if ((ret =
        _gnutls_io_read_buffered (session, record->header_size, -1)) != record->header_size)
     {
-      if (gnutls_error_is_fatal (ret) == 0)
+      if (ret < 0 && gnutls_error_is_fatal (ret) == 0)
         return ret;
       
-      if (ret >= 0)
+      if (ret > 0)
         ret = GNUTLS_E_UNEXPECTED_PACKET_LENGTH;
-      
+      else if (ret == 0)
+        ret = GNUTLS_E_PREMATURE_TERMINATION;
+
       return gnutls_assert_val(ret);
     }
 
@@ -1020,7 +1040,7 @@ begin:
   if (ret >= 0) _mbuffer_set_udata_size(decrypted, ret);
 
   _mbuffer_head_remove_bytes (&session->internals.record_recv_buffer,
-                         record.header_size + record.length);
+                              record.header_size + record.length);
   if (ret < 0)
     {
       gnutls_assert();
@@ -1140,7 +1160,7 @@ recv_error:
   session_unresumable (session);
 
   if (ret == 0)
-    return GNUTLS_E_PREMATURE_TERMINATION;
+    return GNUTLS_E_UNEXPECTED_PACKET_LENGTH;
   else
     return ret;
 }
@@ -1213,7 +1233,8 @@ _gnutls_recv_int (gnutls_session_t session, content_type_t type,
  * %GNUTLS_E_INTERRUPTED or %GNUTLS_E_AGAIN is returned, you must
  * call this function again, with the same parameters; alternatively
  * you could provide a %NULL pointer for data, and 0 for
- * size. cf. gnutls_record_get_direction().
+ * size. cf. gnutls_record_get_direction(). The errno value EMSGSIZE
+ * maps to %GNUTLS_E_LARGE_PACKET.
  *
  * Returns: The number of bytes sent, or a negative error code.  The
  *   number of bytes sent might be less than @data_size.  The maximum

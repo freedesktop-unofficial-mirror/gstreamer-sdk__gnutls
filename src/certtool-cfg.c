@@ -48,7 +48,7 @@
 
 extern int batch;
 
-#define MAX_ENTRIES 16
+#define MAX_ENTRIES 128
 
 typedef struct _cfg_ctx
 {
@@ -61,7 +61,9 @@ typedef struct _cfg_ctx
   char *challenge_password;
   char *pkcs9_email;
   char *country;
+  char **dc;
   char **dns_name;
+  char **uri;
   char **ip_addr;
   char **email;
   char **dn_oid;
@@ -87,6 +89,8 @@ typedef struct _cfg_ctx
   int crl_number;
   int crq_extensions;
   char *proxy_policy_language;
+  char **ocsp_uris;
+  char **ca_issuers_uris;
 } cfg_ctx;
 
 cfg_ctx cfg;
@@ -228,7 +232,10 @@ template_parse (const char *template)
   if (val != NULL && val->valType == OPARG_TYPE_STRING)
     cfg.country = strdup(val->v.strVal);
   
+  READ_MULTI_LINE("dc", cfg.dc);
   READ_MULTI_LINE("dns_name", cfg.dns_name);
+  READ_MULTI_LINE("uri", cfg.uri);
+
   READ_MULTI_LINE("ip_address", cfg.ip_addr);
   READ_MULTI_LINE("email", cfg.email);
   READ_MULTI_LINE("key_purpose_oid", cfg.key_purpose_oids);
@@ -252,6 +259,9 @@ template_parse (const char *template)
   val = optionGetValue(pov, "proxy_policy_language");
   if (val != NULL && val->valType == OPARG_TYPE_STRING)
     cfg.proxy_policy_language = strdup(val->v.strVal);
+
+  READ_MULTI_LINE("ocsp_uri", cfg.ocsp_uris);
+  READ_MULTI_LINE("ca_issuers_uri", cfg.ca_issuers_uris);
   
   READ_BOOLEAN("ca", cfg.ca);
   READ_BOOLEAN("honor_crq_extensions", cfg.crq_extensions);
@@ -429,7 +439,7 @@ get_confirmed_pass (bool empty_ok)
       do
         {
           if (pass)
-            printf ("Password missmatch, try again.\n");
+            fprintf (stderr, "Password missmatch, try again.\n");
 
           free (copy);
 
@@ -702,7 +712,60 @@ get_key_purpose_set (gnutls_x509_crt_t crt)
             }
         }
     }
+}
 
+void
+get_ocsp_issuer_set (gnutls_x509_crt_t crt)
+{
+  int ret, i;
+  gnutls_datum_t uri;
+
+  if (batch)
+    {
+      if (!cfg.ocsp_uris)
+        return;
+      for (i = 0; cfg.ocsp_uris[i] != NULL; i++)
+        {
+          uri.data = cfg.ocsp_uris[i];
+          uri.size = strlen(cfg.ocsp_uris[i]);
+          ret =
+            gnutls_x509_crt_set_authority_info_access (crt, GNUTLS_IA_OCSP_URI,
+                                                       &uri);
+          if (ret < 0)
+            {
+              fprintf (stderr, "set OCSP URI (%s): %s\n",
+                       cfg.ocsp_uris[i], gnutls_strerror (ret));
+              exit (1);
+            }
+        }
+    }
+}
+
+void
+get_ca_issuers_set (gnutls_x509_crt_t crt)
+{
+  int ret, i;
+  gnutls_datum_t uri;
+
+  if (batch)
+    {
+      if (!cfg.ca_issuers_uris)
+        return;
+      for (i = 0; cfg.ca_issuers_uris[i] != NULL; i++)
+        {
+          uri.data = cfg.ca_issuers_uris[i];
+          uri.size = strlen(cfg.ca_issuers_uris[i]);
+          ret =
+            gnutls_x509_crt_set_authority_info_access (crt, GNUTLS_IA_CAISSUERS_URI,
+                                                       &uri);
+          if (ret < 0)
+            {
+              fprintf (stderr, "set CA ISSUERS URI (%s): %s\n",
+                       cfg.ca_issuers_uris[i], gnutls_strerror (ret));
+              exit (1);
+            }
+        }
+    }
 }
 
 
@@ -982,7 +1045,6 @@ get_ip_addr_set (int type, void *crt)
     }
 }
 
-
 void
 get_email_set (int type, void *crt)
 {
@@ -1037,6 +1099,57 @@ get_email_set (int type, void *crt)
   if (ret < 0)
     {
       fprintf (stderr, "set_subject_alt_name: %s\n", gnutls_strerror (ret));
+      exit (1);
+    }
+}
+
+
+void
+get_dc_set (int type, void *crt)
+{
+  int ret = 0, i;
+
+  if (batch)
+    {
+      if (!cfg.dc)
+        return;
+
+      for (i = 0; cfg.dc[i] != NULL; i++)
+        {
+          if (type == TYPE_CRT)
+            ret =  gnutls_x509_crt_set_dn_by_oid (crt, GNUTLS_OID_LDAP_DC,
+                                       0, cfg.dc[i], strlen (cfg.dc[i]));
+          else
+            ret =  gnutls_x509_crq_set_dn_by_oid (crt, GNUTLS_OID_LDAP_DC,
+                                       0, cfg.dc[i], strlen (cfg.dc[i]));
+
+          if (ret < 0)
+            break;
+        }
+    }
+  else
+    {
+      const char *p;
+
+      do 
+        {
+          p = read_str ("Enter the subject's domain component (DC): ");
+          if (!p)
+            return;
+
+          if (type == TYPE_CRT)
+            ret =  gnutls_x509_crt_set_dn_by_oid (crt, GNUTLS_OID_LDAP_DC,
+                                       0, p, strlen (p));
+          else
+            ret =  gnutls_x509_crq_set_dn_by_oid (crt, GNUTLS_OID_LDAP_DC,
+                                       0, p, strlen (p));
+        }
+      while(p != NULL);
+    }
+
+  if (ret < 0)
+    {
+      fprintf (stderr, "set_dn_by_oid: %s\n", gnutls_strerror (ret));
       exit (1);
     }
 }
@@ -1097,6 +1210,64 @@ get_dns_name_set (int type, void *crt)
       exit (1);
     }
 }
+
+void
+get_uri_set (int type, void *crt)
+{
+  int ret = 0, i;
+
+  if (batch)
+    {
+      if (!cfg.uri)
+        return;
+
+      for (i = 0; cfg.uri[i] != NULL; i++)
+        {
+          if (type == TYPE_CRT)
+            ret =
+              gnutls_x509_crt_set_subject_alt_name (crt, GNUTLS_SAN_URI,
+                                                    cfg.uri[i],
+                                                    strlen (cfg.uri[i]),
+                                                    GNUTLS_FSAN_APPEND);
+          else
+            ret =
+              gnutls_x509_crq_set_subject_alt_name (crt, GNUTLS_SAN_URI,
+                                                    cfg.uri[i],
+                                                    strlen (cfg.uri[i]),
+                                                    GNUTLS_FSAN_APPEND);
+
+          if (ret < 0)
+            break;
+        }
+    }
+  else
+    {
+      const char *p;
+
+      do
+        {
+          p =
+            read_str ("Enter a URI of the subject of the certificate: ");
+          if (!p)
+            return;
+
+          if (type == TYPE_CRT)
+            ret = gnutls_x509_crt_set_subject_alt_name
+              (crt, GNUTLS_SAN_URI, p, strlen (p), GNUTLS_FSAN_APPEND);
+          else
+            ret = gnutls_x509_crq_set_subject_alt_name
+              (crt, GNUTLS_SAN_URI, p, strlen (p), GNUTLS_FSAN_APPEND);
+        }
+      while (p);
+    }
+
+  if (ret < 0)
+    {
+      fprintf (stderr, "set_subject_alt_name: %s\n", gnutls_strerror (ret));
+      exit (1);
+    }
+}
+
 
 
 int

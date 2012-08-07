@@ -138,7 +138,6 @@ aes_gcm_encrypt (void *_ctx, const void *src, size_t src_size,
   /* the GCM in kernel will place the tag after the
    * encrypted data.
    */
-fprintf(stderr, "dst: %u, src: %u\n", (unsigned)dst_size, (unsigned)src_size);
   if (dst_size < src_size + GCM_BLOCK_SIZE)
     return gnutls_assert_val(GNUTLS_E_INVALID_REQUEST);
 
@@ -296,14 +295,6 @@ _cryptodev_register_gcm_crypto (int cfd)
 
     }
 
-  return 0;
-}
-
-#else /* CIOCAUTHCRYPT */
-
-int
-_cryptodev_register_gcm_crypto (int cfd)
-{
   return 0;
 }
 

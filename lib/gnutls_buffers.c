@@ -93,7 +93,7 @@ _gnutls_record_buffer_put (gnutls_session_t session,
 size_t
 gnutls_record_check_pending (gnutls_session_t session)
 {
-  return _gnutls_record_buffer_get_size (session) + session->internals.record_recv_buffer.byte_length;
+  return _gnutls_record_buffer_get_size (session);
 }
 
 int
@@ -155,6 +155,23 @@ int ret;
   return ret;
 }
 
+inline static 
+int errno_to_gerr(int err)
+{
+  switch(err)
+    {
+      case EAGAIN:
+        return GNUTLS_E_AGAIN;
+      case EINTR:
+        return GNUTLS_E_INTERRUPTED;
+      case EMSGSIZE:
+        return GNUTLS_E_LARGE_PACKET;
+      default:
+        gnutls_assert ();
+        return GNUTLS_E_PUSH_ERROR;
+    }
+}
+
 static ssize_t
 _gnutls_dgram_read (gnutls_session_t session, mbuffer_st **bufel,
 		    gnutls_pull_func pull_func)
@@ -186,22 +203,8 @@ _gnutls_dgram_read (gnutls_session_t session, mbuffer_st **bufel,
       _gnutls_read_log ("READ: %d returned from %p, errno=%d gerrno=%d\n",
 			(int) i, fd, errno, session->internals.errnum);
 
-      if (err == EAGAIN)
-        {
-          ret = GNUTLS_E_AGAIN;
-          goto cleanup;
-        }
-      else if (err == EINTR)
-        {
-          ret = GNUTLS_E_INTERRUPTED;
-          goto cleanup;
-        }
-      else
-        {
-          gnutls_assert ();
-          ret = GNUTLS_E_PULL_ERROR;
-          goto cleanup;
-        }
+      ret = errno_to_gerr(err);
+      goto cleanup;
     }
   else
     {
@@ -272,9 +275,7 @@ _gnutls_stream_read (gnutls_session_t session, mbuffer_st **bufel,
                   goto finish;
                 }
 
-              if (err == EAGAIN)
-                return GNUTLS_E_AGAIN;
-              return GNUTLS_E_INTERRUPTED;
+              return errno_to_gerr(err);
             }
           else
             {
@@ -347,6 +348,7 @@ _gnutls_writev_emu (gnutls_session_t session, gnutls_transport_ptr_t fd, const g
   return ret;
 }
 
+
 static ssize_t
 _gnutls_writev (gnutls_session_t session, const giovec_t * giovec,
                 int giovec_cnt)
@@ -365,15 +367,8 @@ _gnutls_writev (gnutls_session_t session, const giovec_t * giovec,
     {
       int err = get_errno (session);
       _gnutls_debug_log ("errno: %d\n", err);
-      if (err == EAGAIN)
-        return GNUTLS_E_AGAIN;
-      else if (err == EINTR)
-        return GNUTLS_E_INTERRUPTED;
-      else
-        {
-          gnutls_assert ();
-          return GNUTLS_E_PUSH_ERROR;
-        }
+
+      return errno_to_gerr(err);
     }
   return i;
 }
@@ -439,7 +434,7 @@ _gnutls_io_read_buffered (gnutls_session_t session, size_t total,
       return ret;
     }
 
-  /* READ DATA - but leave RCVLOWAT bytes in the kernel buffer.
+  /* READ DATA
    */
   if (readsize > 0)
     {
@@ -591,6 +586,13 @@ _gnutls_io_write_flush (gnutls_session_t session)
                          (int) send_buffer->byte_length);
       return ret;
     }
+  else if (ret == GNUTLS_E_LARGE_PACKET)
+    {
+      _mbuffer_head_remove_bytes (send_buffer, tosend);
+      _gnutls_write_log ("WRITE cannot send large packet (%u bytes).\n",
+                         (unsigned int) tosend);
+      return ret;
+    }
   else
     {
       _gnutls_write_log ("WRITE error: code %d, %d bytes left.\n",
@@ -722,7 +724,6 @@ _gnutls_handshake_io_cache_int (gnutls_session_t session,
     &session->internals.handshake_send_buffer;
 
   bufel->epoch = (uint16_t)_gnutls_epoch_refcount_inc(session, EPOCH_WRITE_CURRENT);
-
   bufel->htype = htype;
   if (bufel->htype == GNUTLS_HANDSHAKE_CHANGE_CIPHER_SPEC)
     bufel->type = GNUTLS_CHANGE_CIPHER_SPEC;
@@ -800,7 +801,7 @@ parse_handshake_header (gnutls_session_t session, mbuffer_st* bufel,
         {
           hsk->sequence = 0;
           hsk->start_offset = 0;
-          hsk->end_offset = hsk->length;
+          hsk->end_offset = MIN((_mbuffer_get_udata_size(bufel) - handshake_header_size), hsk->length);
         }
     }
   data_size = _mbuffer_get_udata_size(bufel) - handshake_header_size;

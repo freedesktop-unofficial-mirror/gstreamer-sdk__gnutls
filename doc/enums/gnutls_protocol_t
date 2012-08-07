@@ -14,6 +14,8 @@ TLS version 1.1.
 TLS version 1.2.
 @item GNUTLS_@-DTLS1_@-0
 DTLS version 1.0.
+@item GNUTLS_@-DTLS0_@-9
+DTLS version 0.9 (Cisco AnyConnect / OpenSSL 0.9.8e).
 @item GNUTLS_@-VERSION_@-MAX
 Maps to the highest supported TLS version.
 @item GNUTLS_@-VERSION_@-UNKNOWN

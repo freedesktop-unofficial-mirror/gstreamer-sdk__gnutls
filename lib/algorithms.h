@@ -50,11 +50,10 @@ int _gnutls_version_has_explicit_iv (gnutls_protocol_t version);
 
 /* Functions for MACs. */
 int _gnutls_mac_is_ok (gnutls_mac_algorithm_t algorithm);
-gnutls_mac_algorithm_t _gnutls_x509_oid2mac_algorithm (const char *oid);
+gnutls_digest_algorithm_t _gnutls_x509_oid_to_digest (const char *oid);
 const char *_gnutls_x509_mac_to_oid (gnutls_mac_algorithm_t mac);
 
 /* Functions for digests. */
-gnutls_digest_algorithm_t _gnutls_x509_oid2digest_algorithm (const char *oid);
 const char *_gnutls_x509_digest_to_oid (gnutls_digest_algorithm_t algorithm);
 const char *_gnutls_digest_get_name (gnutls_digest_algorithm_t algorithm);
 
@@ -69,6 +68,11 @@ gnutls_cipher_algorithm_t _gnutls_cipher_suite_get_cipher_algo (const
 gnutls_kx_algorithm_t _gnutls_cipher_suite_get_kx_algo (const uint8_t suite[2]);
 gnutls_mac_algorithm_t _gnutls_cipher_suite_get_mac_algo (const
                                                           uint8_t suite[2]);
+
+int
+_gnutls_cipher_suite_get_id (gnutls_kx_algorithm_t kx_algorithm,
+                              gnutls_cipher_algorithm_t cipher_algorithm,
+                              gnutls_mac_algorithm_t mac_algorithm, uint8_t suite[2]);
 
 /* Functions for ciphers. */
 int _gnutls_cipher_is_block (gnutls_cipher_algorithm_t algorithm);
@@ -107,8 +111,6 @@ enum encipher_type _gnutls_kx_encipher_type (gnutls_kx_algorithm_t algorithm);
 
 /* Functions for sign algorithms. */
 gnutls_sign_algorithm_t _gnutls_x509_oid2sign_algorithm (const char *oid);
-gnutls_sign_algorithm_t _gnutls_x509_pk_to_sign (gnutls_pk_algorithm_t pk,
-                                                 gnutls_digest_algorithm_t mac);
 gnutls_pk_algorithm_t _gnutls_x509_sign_to_pk (gnutls_sign_algorithm_t sign);
 const char *_gnutls_x509_sign_to_oid (gnutls_pk_algorithm_t,
                                       gnutls_digest_algorithm_t mac);

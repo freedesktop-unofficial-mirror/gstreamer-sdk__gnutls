@@ -36,6 +36,7 @@
 #include <stdint.h>
 #include <fcntl.h>
 #include <netdb.h>
+#include <ctype.h>
 
 #include <gnutls/gnutls.h>
 #include <gnutls/abstract.h>
@@ -57,7 +58,6 @@
 #include <common.h>
 #include <socket.h>
 
-#include <gettext.h>
 #include <cli-args.h>
 #include <ocsptool-common.h>
 
@@ -72,8 +72,6 @@ int fingerprint;
 int crlf;
 unsigned int verbose = 0;
 int print_cert;
-
-#define DEFAULT_CA_FILE "/etc/ssl/certs/ca-certificates.crt"
 
 const char *srp_passwd = NULL;
 const char *srp_username = NULL;
@@ -209,7 +207,7 @@ load_keys (void)
           crt_num = MAX_CRT;
           ret =
             gnutls_x509_crt_list_import (crt_list, &crt_num, &data,
-                                         GNUTLS_X509_FMT_PEM,
+                                         x509ctype,
                                          GNUTLS_X509_CRT_LIST_IMPORT_FAIL_IF_EXCEED);
           if (ret < 0)
             {
@@ -288,7 +286,7 @@ load_keys (void)
           gnutls_x509_privkey_init (&tmp_key);
 
           ret =
-            gnutls_x509_privkey_import (tmp_key, &data, GNUTLS_X509_FMT_PEM);
+            gnutls_x509_privkey_import (tmp_key, &data, x509ctype);
           if (ret < 0)
             {
               fprintf (stderr, "*** Error loading key file: %s\n",
@@ -479,9 +477,6 @@ cert_verify_callback (gnutls_session_t session)
   int ssh = ENABLED_OPT(TOFU);
   const char* txt_service;
 
-  if (!x509_cafile && !pgp_keyring)
-    return 0;
-    
   rc = cert_verify(session, hostname);
   if (rc == 0)
     {
@@ -674,9 +669,9 @@ init_tls_session (const char *hostname)
    */
   if (disable_extensions == 0)
     {
-      gnutls_handshake_set_private_extensions (session, 1);
-      gnutls_server_name_set (session, GNUTLS_NAME_DNS, hostname,
-                              strlen (hostname));
+      if (!isdigit(hostname[0]) && strchr(hostname, ':') == 0)
+        gnutls_server_name_set (session, GNUTLS_NAME_DNS, hostname,
+                                strlen (hostname));
     }
 
   gnutls_dh_set_prime_bits (session, 512);
@@ -1184,11 +1179,6 @@ const char* rest = NULL;
   
   if (HAVE_OPT(X509CAFILE))
     x509_cafile = OPT_ARG(X509CAFILE);
-  else
-    {
-      if (access(DEFAULT_CA_FILE, R_OK) == 0)
-        x509_cafile = DEFAULT_CA_FILE;
-    }
   
   if (HAVE_OPT(X509CRLFILE))
     x509_crlfile = OPT_ARG(X509CRLFILE);
@@ -1298,6 +1288,7 @@ do_handshake (socket_st * socket)
     }
   else
     {
+      print_cert_info (socket->session, verbose, print_cert);
       gnutls_alert_send_appropriate (socket->session, ret);
       shutdown (socket->fd, SHUT_RDWR);
     }
@@ -1419,15 +1410,20 @@ init_global_tls_stuff (void)
     {
       ret = gnutls_certificate_set_x509_trust_file (xcred,
                                                     x509_cafile, x509ctype);
-      if (ret < 0)
-        {
-          fprintf (stderr, "Error setting the x509 trust file\n");
-        }
-      else
-        {
-          printf ("Processed %d CA certificate(s).\n", ret);
-        }
     }
+  else
+    {
+      ret = gnutls_certificate_set_x509_system_trust (xcred);
+    }
+  if (ret < 0)
+    {
+      fprintf (stderr, "Error setting the x509 trust file\n");
+    }
+  else
+    {
+      printf ("Processed %d CA certificate(s).\n", ret);
+    }
+
   if (x509_crlfile != NULL)
     {
       ret = gnutls_certificate_set_x509_crl_file (xcred, x509_crlfile,

@@ -260,7 +260,7 @@
 @tab 0xC0 0x3B
 @tab TLS1.0
 @item TLS_@-ECDHE_@-ECDSA_@-AES_@-256_@-GCM_@-SHA384
-@tab 0xC0 0x2E
+@tab 0xC0 0x2C
 @tab TLS1.2
 @item TLS_@-ECDHE_@-RSA_@-AES_@-256_@-GCM_@-SHA384
 @tab 0xC0 0x30

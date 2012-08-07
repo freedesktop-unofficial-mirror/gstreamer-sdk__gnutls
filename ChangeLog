@@ -1,3 +1,1649 @@
+2012-08-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, configure.ac, m4/hooks.m4: bumped version
+
+2012-08-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated
+
+2012-08-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/privkey_pkcs8.c: Revert "Do not crash if password is null
+	and GNUTLS_PKCS_PLAIN is not specified." This allows decrypting PKCS
+	#12 structures that are encrypted with a NULL password (which is
+	different than empty).  This reverts commit 7b20e72332e3e5238e8236375a2a82b1387e2e06.
+
+2012-08-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented update
+
+2012-07-26  Petr Písař <petr.pisar@atlas.cz>
+
+	* src/certtool.c: Respect certtool --hash when signing request and
+	CRL The certtool hard-codes the digest algorithm despite '--hash' option
+	exists.  This patch allows user to choose the algorithm when signing
+	certificate request or certificate revocation list.  Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-07-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/openpgp-auth.c, tests/openpgp-auth2.c: use stack for file
+	paths
+
+2012-07-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/scripts/mytexi2latex: handle noindent
+
+2012-07-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: Check for /etc/ssl/cert.pem in OpenBSD. Reported by
+	David Woodhouse and Mike Miller.
+
+2012-07-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/openpgp-auth.c, tests/openpgp-auth2.c: Avoid the usage of
+	alloca(). Reported by Rob McMahon.
+
+2012-07-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/nettle/cipher.c: Avoid returning from void function. Patch by
+	Rob McMahon.
+
+2012-07-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/verify-high.c: When verifying a certificate chain make
+	sure it is chain.  If the chain is interrupted (wrong) at some point then truncate,
+	only try to verify the correct part. Patch by David Woodhouse.
+
+2012-07-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-common.c: added support for legacy sec-param.
+
+2012-07-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, configure.ac, m4/hooks.m4: bumped version
+
+2012-07-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_ui.c: removed warning for bits==512
+
+2012-07-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-07-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/privkey.c: Handle EC DER keys.
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: Added missing functions
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented update
+
+2012-06-30  David Woodhouse <David.Woodhouse@intel.com>
+
+	* lib/gnutls_record.c: Return GNUTLS_E_LARGE_PACKET instead of
+	truncating when sending DTLS record Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.c: fix
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.c: no need to check for DTLS
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.c: no need for _gnutls prefix.
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.c: only block ciphers need 1 byte padding.
+
+2012-06-29  David Woodhouse <David.Woodhouse@intel.com>
+
+	* lib/gnutls_dtls.c: Fix documentation for gnutls_dtls_set_mtu() It *isn't* the interface MTU, it's the transport MTU.  Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented update
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.c: sign fixes
+
+2012-06-29  David Woodhouse <David.Woodhouse@intel.com>
+
+	* lib/gnutls_dtls.c, lib/includes/gnutls/dtls.h, lib/libgnutls.map: 
+	Add gnutls_dtls_set_data_mtu() Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-06-30  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/gnutls_dtls.c, lib/gnutls_int.h, lib/gnutls_state.c,
+	lib/gnutls_state.h: gnutls_dtls_get_data_mtu() is more precise.
+	Based on patch by David Woodhouse.
+
+2012-06-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, src/certtool-args.c, src/certtool-args.h,
+	src/cli-args.c, src/cli-args.h, src/cli-debug-args.c,
+	src/cli-debug-args.h, src/ocsptool-args.c, src/ocsptool-args.h,
+	src/p11tool-args.c, src/p11tool-args.h, src/psk-args.c,
+	src/psk-args.h, src/serv-args.c, src/serv-args.h,
+	src/srptool-args.c, src/srptool-args.h: Added autogen generated
+	files.
+
+2012-06-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_buffers.c: cleaned up errno handling.
+
+2012-06-28  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, doc/cha-gtls-app.texi, lib/gnutls_buffers.c,
+	lib/gnutls_errors.c, lib/gnutls_record.c, lib/system.c: Return
+	GNUTLS_E_LARGE_PACKET when errno is EMSGSIZE
+
+2012-06-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def: do not require load-privkey for to-p12
+
+2012-06-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-06-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/pkcs11.c, lib/pkcs11_privkey.c: Use the label when looking for
+	a certificate or private key in PKCS #11.  Patch by David Woodhouse.  Conflicts: 	lib/pkcs11.c
+
+2012-06-20  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: removed crap
+
+2012-06-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, doc/Makefile.am, lib/algorithms.h,
+	lib/algorithms/ciphersuites.c, lib/algorithms/protocols.c,
+	lib/gnutls_constate.c, lib/gnutls_handshake.c, lib/gnutls_int.h,
+	lib/gnutls_kx.c, lib/gnutls_session_pack.c,
+	lib/includes/gnutls/gnutls.h.in, lib/libgnutls.map: Added support
+	for an old version of the DTLS protocol used by openconnect vpn
+	client for compatibility with Cisco's AnyConnect SSL VPN. It is
+	marked as GNUTLS_DTLS0_9. Do not use it for newer protocols as it
+	has issues.  Conflicts: 	NEWS 	lib/libgnutls.map
+
+2012-06-15  Diego Elio Pettenò <flameeyes@flameeyes.eu>
+
+	* src/Makefile.am: build: make sure to declare the generated source
+	files as BUILT_SOURCES This allows proper building when using parallel make on a multi-core
+	system.  Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.eu>
+	Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-06-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/dtls/dtls-stress.c: correct comparison of sent data in
+	dtls-stress.
+
+2012-06-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-06-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/privkey_pkcs8.c: Fixed leaks in PKCS #8 decoding
+
+2012-06-08  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-cert-select-pkcs11.c: documented pin_callback
+	expectations.
+
+2012-06-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/common.c: Print the fingerprint only in the first certificate
+	in the chain.
+
+2012-06-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: corrected function name
+
+2012-06-06  Mark Brand <mabrand@mabrand.nl>
+
+	* lib/gnutls_x509.c: add missing include wincrypt.h Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: mention retrieve_function2
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/gnutls.h.in: corrected invalid char
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-upgrade.texi, doc/latex/Makefile.am: updates in latex
+	build
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/latex/gnutls.tex: no need for eurosans
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth.texi: do not use @euro{}
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* build-aux/ar-lib, build-aux/config.rpath,
+	build-aux/snippet/_Noreturn.h, gl/Makefile.am, gl/errno.in.h,
+	gl/fseeko.c, gl/fstat.c, gl/ftello.c, gl/lseek.c, gl/m4/dup2.m4,
+	gl/m4/errno_h.m4, gl/m4/fseeko.m4, gl/m4/fstat.m4, gl/m4/ftello.m4,
+	gl/m4/ftruncate.m4, gl/m4/getcwd.m4, gl/m4/getdelim.m4,
+	gl/m4/getline.m4, gl/m4/gettimeofday.m4, gl/m4/gnulib-common.m4,
+	gl/m4/gnulib-comp.m4, gl/m4/largefile.m4, gl/m4/lseek.m4,
+	gl/m4/lstat.m4, gl/m4/malloc.m4, gl/m4/manywarnings.m4,
+	gl/m4/memmem.m4, gl/m4/mmap-anon.m4, gl/m4/off_t.m4,
+	gl/m4/putenv.m4, gl/m4/realloc.m4, gl/m4/setenv.m4,
+	gl/m4/signbit.m4, gl/m4/sleep.m4, gl/m4/stat.m4, gl/m4/strerror.m4,
+	gl/m4/symlink.m4, gl/m4/sys_stat_h.m4, gl/m4/sys_types_h.m4,
+	gl/m4/ungetc.m4, gl/m4/unistd_h.m4, gl/m4/warnings.m4, gl/select.c,
+	gl/stdint.in.h, gl/stdio.in.h, gl/strerror-override.c,
+	gl/strerror-override.h, gl/sys_stat.in.h, gl/sys_types.in.h,
+	gl/tests/binary-io.h, gl/tests/fcntl.in.h, gl/tests/ftruncate.c,
+	gl/tests/ignore-value.h, gl/tests/init.sh, gl/tests/stat.c,
+	gl/tests/test-binary-io.c, gl/tests/test-binary-io.sh,
+	gl/tests/test-errno.c, gl/u64.h, gl/unistd.in.h, ltmain.sh,
+	maint.mk: updated gnulib
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore: move files to ignore
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/Makefile.am, tests/cert-tests/Makefile.am,
+	tests/cert-tests/ca-certs.pem, tests/certs/ca-certs.pem: moved
+	ca-certs.
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* : updated
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, m4/hooks.m4: bumped version
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: doc fix
+
+2012-06-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth2.texi: removed text about function that doesn't
+	exist in this release.
+
+2012-06-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-cfg.c: print warning to stderr
+
+2012-06-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth.texi, doc/cha-cert-auth2.texi: doc updates
+
+2012-06-03  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/openpgp/pgpverify.c: fixes in openpgp certificate
+	verification.
+
+2012-06-03  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/libgnutls.map: Removed duplicate entries and added an explicit
+	local.
+
+2012-06-03  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/pkcs11.c: better function naming.
+
+2012-06-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated
+
+2012-06-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/x509.c: doc updates
+
+2012-05-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/gnutls.h.in: corrected text
+
+2012-05-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/verify.c: corrected typo
+
+2012-05-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_ui.c: typo fix
+
+2012-05-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/privkey.c: documented behavior.
+
+2012-05-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/privkey_pkcs8.c: Do not crash if password is null and
+	GNUTLS_PKCS_PLAIN is not specified.
+
+2012-05-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, lib/gnutls_buffers.c, tests/Makefile.am,
+	tests/certs/ca-certs.pem, tests/mini-x509-cas.c: Corrected handling
+	of handshake packets that span multiple records.
+
+2012-05-28  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: documentation update
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* : added missing file
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac, cross.mk, m4/hooks.m4: bumped version
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_session_pack.c: corrected data copy
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-cfg.c: MAX_ENTRIES increased to 128.
+
+2012-05-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: Updated documentation on DTLS.
+
+2012-05-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-examples.texi: updated documentation.
+
+2012-05-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: no need to distribute gnutls.ps
+
+2012-05-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/Makefile.am, lib/gnutls_x509.c: Use windows trusted
+	certificate store.
+
+2012-05-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac, lib/gnutls_x509.c: Added the notion of a default CRL
+	file.
+
+2012-05-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth.texi, doc/cha-gtls-app.texi,
+	doc/cha-shared-key.texi, doc/examples/ex-client-x509.c,
+	doc/manpages/Makefile.am: documentation updates
+
+2012-05-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_cert.c: updated doc
+
+2012-05-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/common.h: no need for netinet/ip.h
+
+2012-05-23  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/cli.c: no need for default_ca_file
+
+2012-05-23  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/verify.c: When checking for an issuer check for a match
+	in the key identifiers.
+
+2012-05-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: Added text for gnutls_dh_set_prime_bits and
+	gnutls_srp_set_prime_bits
+
+2012-05-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_ui.c: Document the effect of lowering the DH bits.
+
+2012-05-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-client-x509.c, doc/examples/ex-serv-x509.c,
+	lib/gnutls_x509.c: Be more conservative with examples.
+	gnutls_certificate_set_x509_system_trust() returns
+	GNUTLS_E_UNIMPLEMENTED_FEATURE on systems that do not have a (known)
+	default trust store.
+
+2012-05-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-client-dtls.c, doc/examples/ex-client-resume.c,
+	doc/examples/ex-client-srp.c, doc/examples/ex-client-x509.c: Revert
+	"updated examples" This reverts commit 559614fc7a288bf6eaf36ebe696e07b150c96be5.
+
+2012-05-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/cli.c, src/common.c: Print certificate if --print-cert is
+	given, even on verification failure.
+
+2012-05-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def: documented uri option
+
+2012-05-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: Revert "This patch fixes following kind of issue
+	with automake 1.12" It was suggested that this need not to be solved
+	by gnutls.  This reverts commit ace8a662ff90679c575658e787f48577e2fd5940.
+
+2012-05-11  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, src/certtool-cfg.c, src/certtool-cfg.h, src/certtool.c,
+	tests/cert-tests/template-test.pem: Added support for the URI type
+	of subject alternative name in certtool.
+
+2012-05-10  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth.texi, doc/cha-cert-auth2.texi,
+	doc/cha-intro-tls.texi: updated examples and documentation.
+
+2012-05-10  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-client-dtls.c, doc/examples/ex-client-resume.c,
+	doc/examples/ex-client-srp.c, doc/examples/ex-client-x509.c: updated
+	examples
+
+2012-05-10  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/gnutls_x509.c, lib/libgnutls.map: fixes in patch.
+
+2012-05-08  Ludwig Nussel <ludwig.nussel@suse.de>
+
+	* configure.ac, doc/Makefile.am, doc/manpages/Makefile.am,
+	lib/gnutls_x509.c, lib/includes/gnutls/gnutls.h.in,
+	lib/libgnutls.map, src/cli.c: introduce
+	gnutls_certificate_set_x509_system_trust gnutls_certificate_set_x509_system_trust() imports the trusted root
+	CA's from a compile time defined location. That way applications
+	don't need to know.  Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-05-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: added new functions
+
+2012-05-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* README-alpha, src/libopts/Makefile.am, src/libopts/ag-char-map.h,
+	src/libopts/ao-strs.c, src/libopts/ao-strs.h,
+	src/libopts/autoopts.c, src/libopts/autoopts.h,
+	src/libopts/autoopts/options.h, src/libopts/autoopts/project.h,
+	src/libopts/autoopts/usage-txt.h, src/libopts/boolean.c,
+	src/libopts/check.c, src/libopts/compat/compat.h,
+	src/libopts/compat/pathfind.c, src/libopts/configfile.c,
+	src/libopts/cook.c, src/libopts/enum.c, src/libopts/env.c,
+	src/libopts/find.c, src/libopts/genshell.c, src/libopts/genshell.h,
+	src/libopts/libopts.c, src/libopts/load.c,
+	src/libopts/m4/libopts.m4, src/libopts/makeshell.c,
+	src/libopts/nested.c, src/libopts/parse-duration.c,
+	src/libopts/pgusage.c, src/libopts/proto.h, src/libopts/putshell.c,
+	src/libopts/reset.c, src/libopts/save.c, src/libopts/stack.c,
+	src/libopts/streqvcmp.c, src/libopts/tokenize.c,
+	src/libopts/usage.c, src/libopts/value-type.h,
+	src/libopts/xat-attribute.h: updated libopts
+
+2012-05-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, doc/cha-cert-auth2.texi, lib/abstract_int.h,
+	lib/algorithms.h, lib/algorithms/sign.c, lib/ext/signature.c,
+	lib/gnutls_pubkey.c, lib/gnutls_sig.c,
+	lib/includes/gnutls/abstract.h, lib/includes/gnutls/gnutls.h.in,
+	lib/libgnutls.map, lib/x509/verify.c, lib/x509/x509.c,
+	lib/x509/x509_int.h, tests/x509sign-verify.c: Added
+	gnutls_pubkey_verify_hash2() and gnutls_pk_to_sign().
+
+2012-05-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: This patch fixes following kind of issue with
+	automake 1.12 | automake: warnings are treated as errors |
+	/.../automake-1.12/am/ltlibrary.am: warning: 'libgnutls.la': linking
+	libtool libraries using a non-POSIX |
+	/.../automake-1.12/am/ltlibrary.am: archiver requires 'AM_PROG_AR'
+	in 'configure.ac' Patch by: Nitin A Kamble <nitin.a.kamble@intel.com>
+
+2012-05-08  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_sig.c: Corrected allocation check
+
+2012-04-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/autoopts/options.h: removed redundant declaration.
+
+2012-04-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* devel/perlasm/cpuid-x86_64.pl,
+	lib/accelerated/x86/coff/cpuid-x86-64-coff.s: Corrected win64
+	cpuid() code. Report and patch by Mann Ern Kang.
+
+2012-04-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_mpi.c: corrected bug in scan_nz()
+
+2012-04-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, build-aux/config.rpath, configure.ac, m4/hooks.m4: 
+	documented updates and bumped version.
+
+2012-04-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dh.c, lib/gnutls_dh.h: corrected typo
+
+2012-04-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/dh_common.c, lib/gnutls_dh.c, lib/gnutls_dh.h: Return
+	proper error code if parameter check fails.
+
+2012-04-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/srp.c: Added complete check in SRP parameters.
+
+2012-04-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dh.c: Added better sanity checks in Diffie-Hellman key
+	exchange.
+
+2012-04-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: Added option to unconditionally disable crywrap.
+	Patch by Daniel Mierswa.
+
+2012-04-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/verify-tofu.c: Use openpgp if enabled.
+
+2012-04-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/pkcs11.c: If a callback fails try the other.
+
+2012-04-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/pkcs11.c: by default register a file callback in p11-kit
+	to read a file from the pin-source pkcs11url field.
+
+2012-04-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* po/cs.po.in, po/de.po.in, po/fi.po.in, po/it.po.in, po/nl.po.in,
+	po/pl.po.in, po/sv.po.in, po/uk.po.in, po/vi.po.in: Sync with TP.
+
+2012-04-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/Makefile.am, src/cli.c, src/srptool.c: No need to include
+	gettext.h. Link against libintl when needed.
+
+2012-04-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: no abi change in 3.0.19
+
+2012-04-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/gnutls_buffers.c, lib/gnutls_buffers.h,
+	lib/gnutls_handshake.c, lib/includes/gnutls/gnutls.h.in: 
+	gnutls_record_check_unprocessed is now inline function.
+
+2012-04-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/nettle/rnd.c: Update random state on all cases.
+
+2012-04-12  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* gl/tests/ioctl.c: updated gnulib
+
+2012-04-11  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/suite/testcompat-main: Added TLS 1.2 interop tests.
+
+2012-04-11  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/gnutls_pubkey.c, lib/gnutls_state.c: Relax strict
+	DSA/ECDSA checks to allow broader interoperability. Stronger hash
+	algorithms are now allowed even if DSA might only allow SHA1.
+
+2012-04-11  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dh.c: Add sanity checks in Diffie-Hellman key exchange
+	values.
+
+2012-04-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/nettle/mpi.c: corrected DH generation check.
+
+2012-04-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: updated
+
+2012-04-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/gnutls_buffers.c, lib/gnutls_handshake.c,
+	lib/includes/gnutls/gnutls.h.in: gnutls_record_check_pending
+	functionality was divided to gnutls_record_check_pending and
+	gnutls_record_check_unprocessed.
+
+2012-04-09  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_int.h: doc updates
+
+2012-04-08  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/nettle/mpi.c: refuse to generate small group sizes.
+
+2012-04-08  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: do not check for fchmod
+
+2012-04-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi, doc/cha-intro-tls.texi: updated
+	documentation for dtls.
+
+2012-04-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def: updated documentation
+
+2012-04-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-loss-time.c: Revert "avoid killing child" This reverts commit 4965c2fbfd3405e2dfe7f7d747d03185d155c2a1.
+
+2012-04-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fixes
+
+2012-04-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool.c: do not print Key ID in a pkcs12 structure if it is
+	null.
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/common.c: raw_to_string no longer returns NULL.
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/pkcs12-decode/pkcs12: improved test and added debugging
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_sig.c: corrected comparison
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* gl/Makefile.am, gl/dirent.in.h, gl/m4/math_h.m4,
+	gl/m4/stdio_h.m4, gl/m4/warn-on-use.m4, gl/m4/warnings.m4,
+	gl/math.in.h, gl/stdio.in.h, gl/stdlib.in.h, gl/string.in.h,
+	gl/tests/strerror_r.c, gl/tests/test-float.c, gl/tests/test-math.c,
+	gl/wchar.in.h, maint.mk: updated gnulib
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-upgrade.texi: Added more deprecated functions
+
+2012-04-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* gl/override/tests/test-float.c.diff: avoid the floating point
+	test.
+
+2012-04-04  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-dtls-rehandshake.c, tests/mini-loss-time.c,
+	tests/mini-record.c, tests/mini-termination.c,
+	tests/openpgp-auth.c, tests/openpgp-auth2.c: use AF_UNIX for
+	socketpair.
+
+2012-04-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cross.mk: updated
+
+2012-04-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: make dist will also make lzip compressed tarball
+
+2012-04-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/x86/hmac-padlock.c, lib/algorithms.h,
+	lib/algorithms/kx.c, lib/algorithms/mac.c, lib/crypto-api.c,
+	lib/gnutls_cipher_int.c, lib/gnutls_constate.c,
+	lib/gnutls_hash_int.c, lib/gnutls_hash_int.h, lib/gnutls_pk.c,
+	lib/gnutls_pubkey.c, lib/gnutls_sig.c, lib/gnutls_sig.h,
+	lib/includes/gnutls/crypto.h, lib/opencdk/armor.c,
+	lib/opencdk/misc.c, lib/opencdk/new-packet.c, lib/x509/ocsp.c,
+	lib/x509/verify.c, lib/x509/x509.c, lib/x509/x509_int.h: several
+	type changes to please clang
+
+2012-04-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: set release date
+
+2012-04-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/minitasn1/decoding.c: updated libtasn1
+
+2012-04-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: removed old function.
+
+2012-04-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac, m4/hooks.m4: bumped versions
+
+2012-04-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/gnutls.h.in: removed function that didn't
+	exist
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-termination.c: initialize value
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-loss-time.c: avoid killing child
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-dtls-rehandshake.c: avoid closing fd[1] on server. For
+	some reason it makes connection fail.
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: Add FUNCS to distribution
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, NEWS, lib/gnutls_record.c, tests/Makefile.am,
+	tests/mini-dtls-rehandshake.c, tests/mini-record.c,
+	tests/mini-termination.c: Make sure that
+	GNUTLS_E_PREMATURE_TERMINATION is returned if there is premature
+	termination.
+
+2012-03-31  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/dtls/dtls-stress.c: do not build test with timers when posix
+	timers are not present.
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/opencdk/keydb.c, lib/opencdk/literal.c: corrected types
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/x509/ocsp.c: use correct type in snprintf.
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/compat.h: added prototypes for inline
+	functions (some gcc versions couldn't compile without)
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/cert.c, lib/gnutls_auth.h, lib/gnutls_handshake.c,
+	lib/gnutls_int.h, lib/gnutls_kx.c, lib/gnutls_kx.h,
+	lib/gnutls_sig.c, lib/gnutls_sig.h, lib/gnutls_ui.c: even more
+	cleanups
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/cert.c, lib/auth/cert.h, lib/auth/dhe.c, lib/auth/rsa.c,
+	lib/auth/rsa_export.c, lib/auth/srp_rsa.c: more cleanups
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cross.mk: updated
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/ocsp.c, tests/openpgp-auth2.c, tests/resume-dtls.c: Fixes
+	for win32 and time. OCSP test now sets a fixed time to avoid
+	expiration errors.
+
+2012-03-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/cert.c, lib/auth/cert.h, lib/auth/dhe.c, lib/auth/rsa.c,
+	lib/auth/rsa_export.c, lib/auth/srp_rsa.c: simplified internal
+	function names.
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* m4/hooks.m4: improvements in long long usage
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/cryptodev.c: corrected probing of cryptodev
+	digests.
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/accelerated/x86/aes-x86.h, m4/hooks.m4: Do not assume
+	sizeof(unsigned long)==sizeof(void*).  Based on patch by B. Scott
+	Michel.
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/genshell.h: include libintl. Patch by B. Scott Michel
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/Makefile.am, src/libopts/genshell.h: Revert "use
+	header files from gl/ and include gettext.h" This reverts commit 6b3d7b6e31ddab337e185922910262d68f1fc6fa.
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/Makefile.am, src/libopts/genshell.h: use header files
+	from gl/ and include gettext.h
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-cxx.cpp: more warnings to silence.
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated
+
+2012-03-22  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-serv-anon.c: silence warnings. Patch by B. Scott
+	Michel.
+
+2012-03-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/scripts/getfuncs.pl, lib/includes/gnutls/compat.h: Added
+	doc-skip to skip certain functions from documentation.
+
+2012-03-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/compat.h: remove brackets.
+
+2012-03-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/compat.h: Cleaned up deprecated types and
+	added a deprecation warning on them.
+
+2012-03-21  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/compat.h: Provide compatibility inline
+	functions for gnutls_session_get_server_random() and
+	gnutls_session_get_client_random().
+
+2012-03-20  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/accelerated/x86/aes-padlock.c: Only call
+	check_phe_partial() if PHE has been detected.
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Update bootstrapping instructions.
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* .gitignore, doc/Makefile.am: Tell automake about all filenames to
+	fix 'make distcheck'.
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* README-alpha: Clarify bootstrapping.
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/manpages/Makefile.am: Generated.
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* doc/Makefile.am: Build functions/ files (this should be done by
+	listing all files instead).
+
+2012-03-21  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/fpucw.h, gl/glthread/threadlib.c,
+	gl/isnanf-nolibm.h, gl/m4/frexpl.m4, gl/m4/gnulib-comp.m4,
+	gl/m4/ldexpl.m4, gl/m4/math_h.m4, gl/m4/timer_time.m4,
+	gl/math.in.h, gl/tests/Makefile.am, gl/tests/glthread/threadlib.c,
+	gl/tests/macros.h, gl/tests/randomd.c, gl/tests/randoml.c,
+	gl/tests/test-frexp.c, gl/tests/test-frexp.h,
+	gl/tests/test-frexpl.c, gl/tests/test-math.c, maint.mk: Update
+	gnulib files.
+
+2012-03-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, devel/perlasm/e_padlock-x86.pl,
+	devel/perlasm/e_padlock-x86_64.pl, devel/perlasm/ghash-x86.pl,
+	lib/accelerated/x86/README,
+	lib/accelerated/x86/coff/padlock-x86-64-coff.s,
+	lib/accelerated/x86/coff/padlock-x86-coff.s,
+	lib/accelerated/x86/elf/padlock-x86-64.s,
+	lib/accelerated/x86/license.txt,
+	lib/accelerated/x86/macosx/padlock-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/padlock-x86-macosx.s: updated openssl
+	code
+
+2012-03-19  Simon Josefsson <simon@josefsson.org>
+
+	* lib/includes/gnutls/compat.h: Remove TLS_RANDOM_SIZE and
+	TLS_MASTER_SIZE compat mappings.
+
+2012-03-19  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, NEWS, doc/cha-upgrade.texi, lib/gnutls_state.c,
+	lib/includes/gnutls/gnutls.h.in, lib/libgnutls.map: Added
+	gnutls_session_get_random()
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/libgnutls.map: added missing function
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* m4/hooks.m4: better error message
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/scripts/mytexi2latex: updated
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am, doc/cha-upgrade.texi, doc/gnutls.texi,
+	doc/latex/Makefile.am, doc/latex/gnutls.tex: Added chapter to
+	describe changes needed when upgrading.
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-library.texi: doc update
+
+2012-03-18  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/includes/gnutls/x509.h, lib/libgnutls.map,
+	lib/pkix.asn, lib/pkix_asn1_tab.c, lib/x509/common.c,
+	lib/x509/common.h, lib/x509/crl.c, lib/x509/crl_write.c,
+	lib/x509/crq.c, lib/x509/output.c, lib/x509/x509.c,
+	lib/x509/x509_write.c, tests/cert-tests/template-test.pem: Added
+	gnutls_x509_crt_set_private_key_usage_period() and
+	gnutls_x509_crt_get_private_key_usage_period(). The time stored in
+	generated certificates is now GeneralizedTime.
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_handshake.c: changed debugging level for message
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/algorithms/ciphersuites.c: corrected ciphersuite number
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_handshake.c: Added debugging message when encounter an
+	invalid ciphersuite.
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, src/certtool.c: Applied patch to cast days to (time_t)
+	before converting it to seconds to prevent a Y2K38 bug. Patch by
+	Robert Millan.
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am, doc/gnutls.texi, doc/scripts/split-texi.pl: 
+	texinfo documentation is similar to the printed manual.
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, configure.ac, cross.mk, m4/hooks.m4: bumped version
+
+2012-03-17  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_pubkey.c, lib/x509/crq.c, lib/x509/x509.c: corrected
+	the documentation of the verification functions.
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: released 3.0.16
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: enable_local_libopts is by default no
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* m4/hooks.m4: bumped shared lib version
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/includes/gnutls/x509.h, lib/libgnutls.map,
+	lib/x509/x509_write.c, src/certtool-args.def, src/certtool-cfg.c,
+	src/certtool-cfg.h, src/certtool.c: Added
+	gnutls_x509_crt_set_authority_info_access.
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/x86/README: updated
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* devel/perlasm/license-gnutls.txt, devel/perlasm/license.txt,
+	lib/accelerated/x86/coff/appro-aes-gcm-x86-64-coff.s,
+	lib/accelerated/x86/coff/appro-aes-x86-64-coff.s,
+	lib/accelerated/x86/coff/appro-aes-x86-coff.s,
+	lib/accelerated/x86/coff/cpuid-x86-64-coff.s,
+	lib/accelerated/x86/coff/cpuid-x86-coff.s,
+	lib/accelerated/x86/coff/padlock-x86-64-coff.s,
+	lib/accelerated/x86/coff/padlock-x86-coff.s,
+	lib/accelerated/x86/elf/appro-aes-gcm-x86-64.s,
+	lib/accelerated/x86/elf/appro-aes-x86-64.s,
+	lib/accelerated/x86/elf/appro-aes-x86.s,
+	lib/accelerated/x86/elf/cpuid-x86-64.s,
+	lib/accelerated/x86/elf/cpuid-x86.s,
+	lib/accelerated/x86/elf/padlock-x86-64.s,
+	lib/accelerated/x86/elf/padlock-x86.s,
+	lib/accelerated/x86/macosx/appro-aes-gcm-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/appro-aes-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/appro-aes-x86-macosx.s,
+	lib/accelerated/x86/macosx/cpuid-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/cpuid-x86-macosx.s,
+	lib/accelerated/x86/macosx/padlock-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/padlock-x86-macosx.s: updated licenses
+
+2012-03-16  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cfg.mk, lib/accelerated/x86/Makefile.am,
+	lib/accelerated/x86/asm-coff/appro-aes-gcm-x86-64-coff.s,
+	lib/accelerated/x86/asm-coff/appro-aes-x86-64-coff.s,
+	lib/accelerated/x86/asm-coff/appro-aes-x86-coff.s,
+	lib/accelerated/x86/asm-coff/cpuid-x86-64-coff.s,
+	lib/accelerated/x86/asm-coff/cpuid-x86-coff.s,
+	lib/accelerated/x86/asm-coff/padlock-x86-64-coff.s,
+	lib/accelerated/x86/asm-coff/padlock-x86-coff.s,
+	lib/accelerated/x86/asm-macosx/appro-aes-gcm-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/appro-aes-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/appro-aes-x86-macosx.s,
+	lib/accelerated/x86/asm-macosx/cpuid-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/cpuid-x86-macosx.s,
+	lib/accelerated/x86/asm-macosx/padlock-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/padlock-x86-macosx.s,
+	lib/accelerated/x86/asm/appro-aes-gcm-x86-64.s,
+	lib/accelerated/x86/asm/appro-aes-x86-64.s,
+	lib/accelerated/x86/asm/appro-aes-x86.s,
+	lib/accelerated/x86/asm/cpuid-x86-64.s,
+	lib/accelerated/x86/asm/cpuid-x86.s,
+	lib/accelerated/x86/asm/padlock-x86-64.s,
+	lib/accelerated/x86/asm/padlock-x86.s,
+	lib/accelerated/x86/coff/appro-aes-gcm-x86-64-coff.s,
+	lib/accelerated/x86/coff/appro-aes-x86-64-coff.s,
+	lib/accelerated/x86/coff/appro-aes-x86-coff.s,
+	lib/accelerated/x86/coff/cpuid-x86-64-coff.s,
+	lib/accelerated/x86/coff/cpuid-x86-coff.s,
+	lib/accelerated/x86/coff/padlock-x86-64-coff.s,
+	lib/accelerated/x86/coff/padlock-x86-coff.s,
+	lib/accelerated/x86/elf/appro-aes-gcm-x86-64.s,
+	lib/accelerated/x86/elf/appro-aes-x86-64.s,
+	lib/accelerated/x86/elf/appro-aes-x86.s,
+	lib/accelerated/x86/elf/cpuid-x86-64.s,
+	lib/accelerated/x86/elf/cpuid-x86.s,
+	lib/accelerated/x86/elf/padlock-x86-64.s,
+	lib/accelerated/x86/elf/padlock-x86.s,
+	lib/accelerated/x86/macosx/appro-aes-gcm-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/appro-aes-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/appro-aes-x86-macosx.s,
+	lib/accelerated/x86/macosx/cpuid-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/cpuid-x86-macosx.s,
+	lib/accelerated/x86/macosx/padlock-x86-64-macosx.s,
+	lib/accelerated/x86/macosx/padlock-x86-macosx.s: renamed asm
+	directories.
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented update
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/x86/Makefile.am: corrected makefile
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: Added missing elf part.
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cfg.mk, configure.ac, lib/accelerated/x86/Makefile.am,
+	lib/accelerated/x86/asm-macosx/appro-aes-gcm-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/appro-aes-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/appro-aes-x86-macosx.s,
+	lib/accelerated/x86/asm-macosx/cpuid-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/cpuid-x86-macosx.s,
+	lib/accelerated/x86/asm-macosx/padlock-x86-64-macosx.s,
+	lib/accelerated/x86/asm-macosx/padlock-x86-macosx.s: Added assembly
+	for macosx
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi: corrected typo
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-verify-ssh.c: reduced lines
+
+2012-03-15  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def, src/p11tool-args.def: doc updates
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def: added spacing
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/srp/Makefile.am, tests/srp/mini-srp.c, tests/srp/tpasswd,
+	tests/srp/tpasswd.conf: generate tpasswd files on the spot.
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/ca.pem, tests/enc3pkcs8.pem, tests/test1.pem,
+	tests/test10.pem, tests/test13.pem, tests/test2.pem,
+	tests/test20.pem, tests/test21.pem, tests/test22.pem,
+	tests/test23.pem, tests/test24.pem, tests/test25.pem,
+	tests/test26.pem, tests/test3.pem, tests/x509_test.c: removed unused
+	files.
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: stamp_enums is shipped to avoid regenerating
+	parts of doc
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* README: corrected urls
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac, m4/hooks.m4: bumped version.
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_record.c: corrected call to gnutls_error_is_fatal().
+
+2012-03-14  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated description
+
+2012-03-14  Simon Josefsson <simon@josefsson.org>
+
+	* lib/minitasn1/coding.c, lib/minitasn1/decoding.c,
+	lib/minitasn1/libtasn1.h: Update minitasn1.
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/suite/Makefile.am, tests/suite/invalid-cert: Added test on
+	an invalid certificate.
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/minitasn1/decoding.c: updated.
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/minitasn1/coding.c, lib/minitasn1/decoding.c,
+	lib/minitasn1/libtasn1.h: more recent libtasn1
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/minitasn1/coding.c, lib/minitasn1/decoding.c,
+	lib/minitasn1/element.c, lib/minitasn1/element.h,
+	lib/minitasn1/errors.c, lib/minitasn1/gstr.c, lib/minitasn1/gstr.h,
+	lib/minitasn1/int.h, lib/minitasn1/libtasn1.h,
+	lib/minitasn1/parser_aux.c, lib/minitasn1/parser_aux.h,
+	lib/minitasn1/structure.c, lib/minitasn1/structure.h,
+	lib/minitasn1/version.c: updated included libtasn1
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/cli.c: gnutls-cli honours the --x509fmtder.
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/cli.c: only set the server name if we do not have an IP
+	address.
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* README: Do not use fixed versions
+
+2012-03-13  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-cert-auth.texi, doc/cha-cert-auth2.texi,
+	lib/includes/gnutls/gnutls.h.in: Documentation updates
+
+2012-03-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/cryptodev.c: when using cryptodev do not set all
+	the digest function since they are not always faster.
+
+2012-03-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/x86/aes-gcm-padlock.c,
+	lib/accelerated/x86/aes-gcm-x86.c: corrected comments.
+
+2012-03-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/cryptodev.c: reset the siop structure on every
+	loop
+
+2012-03-07  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/benchmark-cipher.c: add more space to dst to allow GCM mode
+	tests in cryptodev.
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, src/certtool-args.def, src/certtool-cfg.c,
+	src/certtool-cfg.h, src/certtool.c: certtool may explicitly set the
+	domain component (DC) field of a DN.
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/includes/gnutls/x509.h, src/certtool-args.def: Added a real
+	key purpose OID as example
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/p11tool-args.def: updated p11tool documentation.
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, src/p11tool.c: Only set the private status if it has been
+	explicitly specified. That is because some tokens don't want it set.
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool.c: The default cipher when encrypting with PKCS12 is
+	AES.
+
+2012-03-06  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/certtool-args.def: to-p12 requires the load-certificate and
+	load-privkey.
+
+2012-03-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/latex/cover.tex: updated front-page to include all
+	contributors.
+
+2012-03-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-bib.texi, doc/cha-internals.texi, doc/latex/gnutls.bib: 
+	Some updates on supplemental data handling.
+
+2012-03-05  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/safe-renegotiation/Makefile.am: safe renegotiation tests
+	only run under valgrind in the devel environment.
+
+2012-03-03  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/latex/gnutls.tex: updated
+
+2012-03-03  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi, doc/scripts/mytexi2latex: changes in
+	asynchronous documentation
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/makeshell.c: Added ifdef HAVE_FCHMOD
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-shared-key.texi: More documentation on SRP
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/srp/mini-srp.c: Test SRP-RSA and plain SRP.
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/srp_rsa.c: Corrected SRP-RSA in TLS 1.2
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-internals.texi: break line on long string.
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cfg.mk, cross.mk: small updates
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/examples/ex-client-psk.c: Corrected PSK client example.
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/srp/Makefile.am: Added missing files.
+
+2012-03-02  Carolin Latze <latze@angry-red-pla.net>
+
+	* doc/cha-internals.texi: supp data doc added Signed-off-by: Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: released 3.0.15
+
+2012-03-02  Simon Josefsson <simon@josefsson.org>
+
+	* doc/reference/gnutls-docs.sgml: Fix index with new 3.0.x symbols.
+
+2012-03-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/includes/gnutls/gnutls.h.in, lib/includes/gnutls/ocsp.h,
+	lib/verify-tofu.c: Doc fixes for GTK-DOC.
+
+2012-03-02  Simon Josefsson <simon@josefsson.org>
+
+	* lib/gnutls_dtls.c, lib/gnutls_dtls.h: De-inline some dtls
+	functions.  Avoids compiler error on gcc 4.4.5 (Debian Squeeze) that complains
+	about "call is unlikely and code size would grow".
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, configure.ac, tests/Makefile.am,
+	tests/srp/Makefile.am, tests/srp/mini-srp.c, tests/srp/tpasswd,
+	tests/srp/tpasswd.conf: Added SRP test.
+
+2012-03-02  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/auth/srp_passwd.c, lib/ext/srp.c, lib/gnutls_errors.c: Fixes
+	and memory leak elimination in SRP authentication.
+
+2012-03-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/auth/srp.c: Eliminate double free during SRP
+	authentication.
+
+2012-03-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* Makefile.am: corrected version replacement in .texi.
+
+2012-03-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac, m4/hooks.m4: bumped version
+
+2012-03-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/Makefile.am: avoid regeneration of header files
+
+2012-03-01  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/pkcs11.c: No longer crash on a pkcs11 object without an
+	ID.
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-record.c: eliminated memory leaks in new test.
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, tests/Makefile.am, tests/mini-record.c: Added test for
+	invalid record packet sizes.
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_buffers.c, lib/gnutls_mbuffers.c, lib/gnutls_record.c: 
+	artistic changes.
+
+2012-02-29  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_mbuffers.c: corrected copying of buffers.
+
+2012-02-28  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/serv.c: corrected check_command() input
+
+2012-02-29  Simon Josefsson <simon@josefsson.org>
+
+	* gl/Makefile.am, gl/m4/fpieee.m4, gl/m4/math_h.m4, gl/math.in.h: 
+	Update gnulib files.
+
+2012-02-29  Simon Josefsson <simon@josefsson.org>
+
+	* src/libopts/Makefile.am, src/libopts/ag-char-map.h,
+	src/libopts/ao-strs.c, src/libopts/ao-strs.h,
+	src/libopts/autoopts/options.h, src/libopts/autoopts/usage-txt.h,
+	src/libopts/genshell.c, src/libopts/genshell.h,
+	src/libopts/m4/libopts.m4, src/libopts/makeshell.c,
+	src/libopts/proto.h, src/libopts/value-type.h,
+	src/libopts/xat-attribute.h: Update to autogen 5.15.
+
+2012-02-28  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_cipher.c: changes in packet parsing.
+
+2012-02-28  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* THANKS, src/common.c: Do not call gnutls_x509_crt_check_hostname()
+	if hostname eq NULL. Reported by Matthew Hall.
+
+2012-02-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi, lib/gnutls_state.c: Updated documentation
+	on gnutls_prf()
+
+2012-02-27  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: updated
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: re-updated
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: Revert "always link against the distributed libopts" This reverts commit ae3033fee01f058a028406648ebc32294774e282.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* Makefile.am: replace @VERSION@ in the program documentation.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* README-alpha: document autogen minimum version
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, lib/accelerated/cryptodev.c: Updated cryptodev code.  Hash
+	reset is being performed in a single ioctl() with update and TLS
+	versions (<1.1) that do not have explicit IV are correctly handled.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/mini-dtls-rehandshake.c: added all cases.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/cryptodev-gcm.c: removed debugging
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/accelerated/cryptodev-gcm.c, lib/accelerated/cryptodev.c: 
+	simplified gcm registration in cryptodev.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/cli-args.def: doc updates
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented updates
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_record.c: If a client hello is received immediately
+	after a completed handshake delete the async_timer to rehandshake.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_dtls.h, lib/gnutls_handshake.c: When rehandshake is
+	requested by server force the cleanup of the previous handshake
+	state.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* .gitignore, tests/Makefile.am, tests/mini-dtls-rehandshake.c,
+	tests/mini-rehandshake.c, tests/mini-x509-rehandshake.c,
+	tests/resume-dtls.c: Added mini-dtls-rehandshake.c to test
+	rehandshake in DTLS.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_handshake.c: Corrected session resumption for DTLS
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/Makefile.am, tests/mini-loss.c: removed redundant test.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/gnutls_buffers.c, lib/gnutls_constate.c, lib/gnutls_dtls.c,
+	lib/gnutls_dtls.h, lib/gnutls_handshake.c, lib/gnutls_record.c: 
+	fixes in DTLS rehandshake and epoch cleanup.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/common.c, src/common.h, src/serv.c, src/udp-serv.c: 
+	rehandshake command works in udp mode as well.
+
+2012-02-26  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/cha-gtls-app.texi, src/ocsptool-args.def,
+	src/p11tool-args.def: properly break lines.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/scripts/cleanup-autogen.pl: updated
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/libopts/Makefile.am, src/libopts/ag-char-map.h,
+	src/libopts/alias.c, src/libopts/ao-strs.c, src/libopts/ao-strs.h,
+	src/libopts/autoopts.h, src/libopts/autoopts/options.h,
+	src/libopts/autoopts/usage-txt.h, src/libopts/compat/compat.h,
+	src/libopts/configfile.c, src/libopts/cook.c,
+	src/libopts/genshell.c, src/libopts/genshell.h,
+	src/libopts/m4/libopts.m4, src/libopts/numeric.c,
+	src/libopts/proto.h, src/libopts/putshell.c,
+	src/libopts/value-type.h, src/libopts/xat-attribute.h: Updated
+	libopts.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: always link against the distributed libopts
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/Makefile.am, src/Makefile.am, tests/dtls/Makefile.am: Link to
+	correct libraries.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/dtls/dtls-stress.c: updated headers.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* GNUmakefile, gl/Makefile.am, gl/alloca.in.h, gl/alphasort.c,
+	gl/arpa_inet.in.h, gl/asnprintf.c, gl/asprintf.c, gl/base64.c,
+	gl/base64.h, gl/c-ctype.c, gl/c-ctype.h, gl/errno.in.h,
+	gl/float+.h, gl/fseeko.c, gl/gai_strerror.c, gl/getaddrinfo.c,
+	gl/getdelim.c, gl/getline.c, gl/getpass.c, gl/getpass.h,
+	gl/gettext.h, gl/gettimeofday.c, gl/inet_ntop.c, gl/lseek.c,
+	gl/m4/gnulib-cache.m4, gl/m4/gnulib-comp.m4, gl/m4/math_h.m4,
+	gl/m4/timer_time.m4, gl/malloc.c, gl/math.in.h, gl/memmem.c,
+	gl/mempcpy.c, gl/minmax.h, gl/msvc-inval.c, gl/msvc-inval.h,
+	gl/msvc-nothrow.c, gl/msvc-nothrow.h, gl/netdb.in.h,
+	gl/netinet_in.in.h, gl/printf-args.c, gl/printf-args.h,
+	gl/printf-parse.c, gl/printf-parse.h, gl/read-file.c,
+	gl/read-file.h, gl/scandir.c, gl/select.c, gl/size_max.h,
+	gl/snprintf.c, gl/stdalign.in.h, gl/stdarg.in.h, gl/stdbool.in.h,
+	gl/stddef.in.h, gl/stdint.in.h, gl/stdio.in.h, gl/str-two-way.h,
+	gl/strcasecmp.c, gl/strdup.c, gl/string.in.h, gl/strings.in.h,
+	gl/strncasecmp.c, gl/strndup.c, gl/strnlen.c, gl/strverscmp.c,
+	gl/sys_select.in.h, gl/sys_socket.in.h, gl/sys_stat.in.h,
+	gl/sys_time.in.h, gl/sys_types.in.h, gl/sys_uio.in.h,
+	gl/tests/glthread/lock.c, gl/tests/glthread/lock.h,
+	gl/tests/glthread/threadlib.c, gl/tests/malloca.c,
+	gl/tests/malloca.h, gl/tests/pathmax.h, gl/tests/pipe.c,
+	gl/tests/sys_ioctl.in.h, gl/tests/test-base64.c,
+	gl/tests/test-fgetc.c, gl/tests/test-fputc.c,
+	gl/tests/test-fread.c, gl/tests/test-fwrite.c,
+	gl/tests/test-getdelim.c, gl/tests/test-getline.c,
+	gl/tests/test-perror.c, gl/tests/test-perror2.c,
+	gl/tests/test-pipe.c, gl/tests/test-strerror.c,
+	gl/tests/test-strerror_r.c, gl/tests/test-strverscmp.c,
+	gl/time.in.h, gl/time_r.c, gl/unistd.in.h, gl/vasnprintf.c,
+	gl/vasnprintf.h, gl/vasprintf.c, gl/vsnprintf.c, gl/wchar.in.h,
+	gl/xsize.h, maint.mk: Added timer_time.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS: documented fix
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* src/udp-serv.c: provide accurate value to select
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* lib/system.c: make sure that the microseconds field does not
+	overflow
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* tests/Makefile.am: use valgrind only on development environment.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* configure.ac: updated libopts check
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* cross.mk: updated
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* NEWS, configure.ac: Link with local libopts if the installed is an
+	old one.
+
+2012-02-25  Nikos Mavrogiannopoulos <nmav@gnutls.org>
+
+	* doc/scripts/Makefile.am: Added getfuncs.pl to distribution.
+
 2012-02-24  Nikos Mavrogiannopoulos <nmav@gnutls.org>
 
 	* NEWS: updated NEWS

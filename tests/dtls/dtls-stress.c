@@ -79,7 +79,7 @@
  * 8    error parsing command line
  */
 
-
+#include <config.h>
 #include <gnutls/gnutls.h>
 #include <gnutls/openpgp.h>
 #include <gnutls/dtls.h>
@@ -94,7 +94,9 @@
 #include <errno.h>
 #include <poll.h>
 #include <time.h>
-#include <wait.h>
+#include <sys/wait.h>
+
+#if _POSIX_TIMERS && (_POSIX_TIMERS - 200112L) >= 0
 
 // {{{ types
 
@@ -661,7 +663,7 @@ static void client(int sock)
 		len = process_error(gnutls_record_recv(session, buffer, sizeof(buffer)));
 	} while (len < 0);
 
-	if (len > 0 && strcmp(line, buffer) == 0) {
+	if (len > 0 && strncmp(line, buffer, len) == 0) {
 		exit(0);
 	} else {
 		exit(1);
@@ -1141,3 +1143,12 @@ int main(int argc, const char* argv[])
 }
 
 // vim: foldmethod=marker
+
+#else /* NO POSIX TIMERS */
+
+int main(int argc, const char* argv[])
+{
+  exit(77);
+}
+
+#endif
