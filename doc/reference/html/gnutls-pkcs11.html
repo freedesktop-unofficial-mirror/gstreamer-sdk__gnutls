@@ -69,7 +69,7 @@ typedef             <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t
                                                          <em class="parameter"><code>const <span class="type">char</span> *url</code></em>,
                                                          <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-export-url" title="gnutls_pkcs11_obj_export_url ()">gnutls_pkcs11_obj_export_url</a>        (<em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> obj</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-deinit" title="gnutls_pkcs11_obj_deinit ()">gnutls_pkcs11_obj_deinit</a>            (<em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> obj</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-export" title="gnutls_pkcs11_obj_export ()">gnutls_pkcs11_obj_export</a>            (<em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> obj</code></em>,
@@ -95,7 +95,7 @@ enum                <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-a
 enum                <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-token-info-t" title="enum gnutls_pkcs11_token_info_t">gnutls_pkcs11_token_info_t</a>;
 enum                <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-type-t" title="enum gnutls_pkcs11_obj_type_t">gnutls_pkcs11_obj_type_t</a>;
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-token-get-url" title="gnutls_pkcs11_token_get_url ()">gnutls_pkcs11_token_get_url</a>         (<em class="parameter"><code>unsigned <span class="type">int</span> seq</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-token-get-info" title="gnutls_pkcs11_token_get_info ()">gnutls_pkcs11_token_get_info</a>        (<em class="parameter"><code>const <span class="type">char</span> *url</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-token-info-t" title="enum gnutls_pkcs11_token_info_t"><span class="type">gnutls_pkcs11_token_info_t</span></a> ttype</code></em>,
@@ -133,7 +133,7 @@ const <span class="returnvalue">char</span> *        <a class="link" href="gnutl
                                                          <em class="parameter"><code>const <span class="type">char</span> *url</code></em>,
                                                          <em class="parameter"><code>unsigned <span class="type">int</span> flags</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-privkey-export-url" title="gnutls_pkcs11_privkey_export_url ()">gnutls_pkcs11_privkey_export_url</a>    (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pkcs11-privkey-t" title="gnutls_pkcs11_privkey_t"><span class="type">gnutls_pkcs11_privkey_t</span></a> key</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);
 </pre>
 </div>
@@ -244,7 +244,7 @@ it will increase by one for each subsequent attempt.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
-<td>a <a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-pin-flag-t"><span class="type">gnutls_pkcs11_pin_flag_t</span></a> flag.</td>
+<td>a <span class="type">gnutls_pkcs11_pin_flag_t</span> flag.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pin</code></em> :</span></p></td>
@@ -508,7 +508,7 @@ negative error value.</td>
 <div class="refsect2">
 <a name="gnutls-pkcs11-obj-export-url"></a><h3>gnutls_pkcs11_obj_export_url ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>                 gnutls_pkcs11_obj_export_url        (<em class="parameter"><code><a class="link" href="gnutls-pkcs11.html#gnutls-pkcs11-obj-t" title="gnutls_pkcs11_obj_t"><span class="type">gnutls_pkcs11_obj_t</span></a> obj</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);</pre>
 <p>
 This function will export a URL identifying the given certificate.
@@ -973,7 +973,7 @@ Enumeration of object types.
 <div class="refsect2">
 <a name="gnutls-pkcs11-token-get-url"></a><h3>gnutls_pkcs11_token_get_url ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>                 gnutls_pkcs11_token_get_url         (<em class="parameter"><code>unsigned <span class="type">int</span> seq</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);</pre>
 <p>
 This function will return the URL for each token available
@@ -1424,7 +1424,7 @@ negative error value.</td>
 <div class="refsect2">
 <a name="gnutls-pkcs11-privkey-export-url"></a><h3>gnutls_pkcs11_privkey_export_url ()</h3>
 <pre class="programlisting"><span class="returnvalue">int</span>                 gnutls_pkcs11_privkey_export_url    (<em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-pkcs11-privkey-t" title="gnutls_pkcs11_privkey_t"><span class="type">gnutls_pkcs11_privkey_t</span></a> key</code></em>,
-                                                         <em class="parameter"><code><a href="https://www.gnu.org/software/gnutls/reference/gnutls-pkcs11.html#gnutls-pkcs11-url-type-t"><span class="type">gnutls_pkcs11_url_type_t</span></a> detailed</code></em>,
+                                                         <em class="parameter"><code><span class="type">gnutls_pkcs11_url_type_t</span> detailed</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **url</code></em>);</pre>
 <p>
 This function will export a URL identifying the given key.

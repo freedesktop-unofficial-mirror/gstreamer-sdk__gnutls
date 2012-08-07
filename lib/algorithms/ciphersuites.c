@@ -205,7 +205,7 @@ typedef struct
 #define GNUTLS_ECDHE_RSA_AES_256_GCM_SHA384     {0xC0,0x30}
 
 /* SuiteB */
-#define GNUTLS_ECDHE_ECDSA_AES_256_GCM_SHA384   {0xC0,0x2E}
+#define GNUTLS_ECDHE_ECDSA_AES_256_GCM_SHA384   {0xC0,0x2C}
 #define GNUTLS_ECDHE_ECDSA_AES_256_CBC_SHA384   {0xC0,0x24}
 
 
@@ -724,6 +724,35 @@ const gnutls_cipher_suite_entry * ce;
     return NULL;
   else 
     return ce->name + sizeof ("GNUTLS_") - 1;
+}
+
+/*-
+ * _gnutls_cipher_suite_get_id:
+ * @kx_algorithm: is a Key exchange algorithm
+ * @cipher_algorithm: is a cipher algorithm
+ * @mac_algorithm: is a MAC algorithm
+ * @suite: The id to be returned
+ *
+ * It fills @suite with the ID of the ciphersuite of the provided parameters.
+ *
+ * Returns: 0 on success or a negative error code otherwise.
+ -*/
+int
+_gnutls_cipher_suite_get_id (gnutls_kx_algorithm_t kx_algorithm,
+                              gnutls_cipher_algorithm_t cipher_algorithm,
+                              gnutls_mac_algorithm_t mac_algorithm, uint8_t suite[2])
+{
+const gnutls_cipher_suite_entry * ce;
+
+  ce = cipher_suite_get (kx_algorithm, cipher_algorithm, mac_algorithm);
+  if (ce == NULL)
+    return GNUTLS_E_INVALID_REQUEST;
+  else
+    {
+      suite[0] = ce->id[0];
+      suite[1] = ce->id[1];
+    }
+  return 0;
 }
 
 /**

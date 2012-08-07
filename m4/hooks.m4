@@ -39,12 +39,12 @@ AC_DEFUN([LIBGNUTLS_HOOKS],
   # Interfaces changed/added/removed:   CURRENT++       REVISION=0
   # Interfaces added:                             AGE++
   # Interfaces removed:                           AGE=0
-  AC_SUBST(LT_CURRENT, 34)
+  AC_SUBST(LT_CURRENT, 38)
   AC_SUBST(LT_REVISION, 1)
-  AC_SUBST(LT_AGE, 6)
+  AC_SUBST(LT_AGE, 10)
 
   AC_SUBST(LT_SSL_CURRENT, 27)
-  AC_SUBST(LT_SSL_REVISION, 1)
+  AC_SUBST(LT_SSL_REVISION, 2)
   AC_SUBST(LT_SSL_AGE, 0)
 
   AC_SUBST(CXX_LT_CURRENT, 28)
@@ -86,7 +86,7 @@ if test "$cryptolib" = "nettle";then
     if test "$ac_cv_libnettle" != yes; then
       AC_MSG_ERROR([[
   *** 
-  *** Libnettle 2.4 was not found. 
+  *** Libnettle 2.4 was not found. You must compile nettle with gmp support.
   ]])
     fi
 else
@@ -221,15 +221,16 @@ fi
   # For storing integers in pointers without warnings
   # http://developer.gnome.org/doc/API/2.0/glib/glib-Type-Conversion-Macros.html#desc
   AC_CHECK_SIZEOF(void *)
+  AC_CHECK_SIZEOF(long long)
   AC_CHECK_SIZEOF(long)
   AC_CHECK_SIZEOF(int)
-  case $ac_cv_sizeof_void_p in
-    $ac_cv_sizeof_long)
+  if test x$ac_cv_sizeof_void_p = x$ac_cv_sizeof_long;then
       AC_DEFINE([GNUTLS_POINTER_TO_INT_CAST], [(long)],
                 [Additional cast to bring void* to a type castable to int.])
-      ;;
-    *)
+  elif test x$ac_cv_sizeof_void_p = x$ac_cv_sizeof_long_long;then
+      AC_DEFINE([GNUTLS_POINTER_TO_INT_CAST], [(long long)],
+                [Additional cast to bring void* to a type castable to int.])
+   else
       AC_DEFINE([GNUTLS_POINTER_TO_INT_CAST], [])
-      ;;
-  esac
+   fi
 ])

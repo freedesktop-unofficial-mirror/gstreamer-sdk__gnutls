@@ -791,9 +791,8 @@ cleanup:
 
 }
 
-/* Generate client certificate
+/* Generate certificate message
  */
-
 static int
 _gnutls_gen_x509_crt (gnutls_session_t session, gnutls_buffer_st * data)
 {
@@ -1023,7 +1022,7 @@ _gnutls_gen_openpgp_certificate_fpr (gnutls_session_t session,
 
 
 int
-_gnutls_gen_cert_client_certificate (gnutls_session_t session,
+_gnutls_gen_cert_client_crt (gnutls_session_t session,
                                      gnutls_buffer_st * data)
 {
   switch (session->security_parameters.cert_type)
@@ -1045,7 +1044,7 @@ _gnutls_gen_cert_client_certificate (gnutls_session_t session,
 }
 
 int
-_gnutls_gen_cert_server_certificate (gnutls_session_t session,
+_gnutls_gen_cert_server_crt (gnutls_session_t session,
                                      gnutls_buffer_st * data)
 {
   switch (session->security_parameters.cert_type)
@@ -1067,7 +1066,7 @@ _gnutls_gen_cert_server_certificate (gnutls_session_t session,
 
 #define CLEAR_CERTS for(x=0;x<peer_certificate_list_size;x++) gnutls_pcert_deinit(&peer_certificate_list[x])
 static int
-_gnutls_proc_x509_server_certificate (gnutls_session_t session,
+_gnutls_proc_x509_server_crt (gnutls_session_t session,
                                       uint8_t * data, size_t data_size)
 {
   int size, len, ret;
@@ -1209,7 +1208,7 @@ cleanup:
 
 #ifdef ENABLE_OPENPGP
 static int
-_gnutls_proc_openpgp_server_certificate (gnutls_session_t session,
+_gnutls_proc_openpgp_server_crt (gnutls_session_t session,
                                          uint8_t * data, size_t data_size)
 {
   int size, ret, len;
@@ -1408,7 +1407,7 @@ cleanup:
 #endif
 
 int
-_gnutls_proc_certificate (gnutls_session_t session,
+_gnutls_proc_crt (gnutls_session_t session,
                                       uint8_t * data, size_t data_size)
 {
   int ret;
@@ -1428,12 +1427,12 @@ _gnutls_proc_certificate (gnutls_session_t session,
     {
 #ifdef ENABLE_OPENPGP
     case GNUTLS_CRT_OPENPGP:
-      ret = _gnutls_proc_openpgp_server_certificate (session,
+      ret = _gnutls_proc_openpgp_server_crt (session,
                                                      data, data_size);
       break;
 #endif
     case GNUTLS_CRT_X509:
-      ret = _gnutls_proc_x509_server_certificate (session, data, data_size);
+      ret = _gnutls_proc_x509_server_crt (session, data, data_size);
       break;
     default:
       gnutls_assert ();
@@ -1573,13 +1572,13 @@ _gnutls_proc_cert_cert_req (gnutls_session_t session, uint8_t * data,
   /* We should reply with a certificate message, 
    * even if we have no certificate to send.
    */
-  session->key->certificate_requested = 1;
+  session->key->crt_requested = 1;
 
   return 0;
 }
 
 int
-_gnutls_gen_cert_client_cert_vrfy (gnutls_session_t session,
+_gnutls_gen_cert_client_crt_vrfy (gnutls_session_t session,
                                    gnutls_buffer_st * data)
 {
   int ret;
@@ -1603,7 +1602,7 @@ _gnutls_gen_cert_client_cert_vrfy (gnutls_session_t session,
   if (apr_cert_list_length > 0)
     {
       if ((ret =
-           _gnutls_handshake_sign_cert_vrfy (session,
+           _gnutls_handshake_sign_crt_vrfy (session,
                                              &apr_cert_list[0],
                                              apr_pkey, &signature)) < 0)
         {
@@ -1661,7 +1660,7 @@ cleanup:
 }
 
 int
-_gnutls_proc_cert_client_cert_vrfy (gnutls_session_t session,
+_gnutls_proc_cert_client_crt_vrfy (gnutls_session_t session,
                                     uint8_t * data, size_t data_size)
 {
   int size, ret;
@@ -1724,7 +1723,7 @@ _gnutls_proc_cert_client_cert_vrfy (gnutls_session_t session,
     }
 
   if ((ret =
-       _gnutls_handshake_verify_cert_vrfy (session, &peer_cert, &sig,
+       _gnutls_handshake_verify_crt_vrfy (session, &peer_cert, &sig,
                                            sign_algo)) < 0)
     {
       gnutls_assert ();

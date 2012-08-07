@@ -856,12 +856,12 @@ parameters from the public key.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
-negative error value (<a class="link" href="gnutls-gnutls.html#GNUTLS-E-PK-SIG-VERIFY-FAILED:CAPS" title="GNUTLS_E_PK_SIG_VERIFY_FAILED"><code class="literal">GNUTLS_E_PK_SIG_VERIFY_FAILED</code></a> in verification failure).</td>
+<td>In case of a verification failure <a class="link" href="gnutls-gnutls.html#GNUTLS-E-PK-SIG-VERIFY-FAILED:CAPS" title="GNUTLS_E_PK_SIG_VERIFY_FAILED"><code class="literal">GNUTLS_E_PK_SIG_VERIFY_FAILED</code></a>
+is returned, and zero or positive code on success.</td>
 </tr>
 </tbody>
 </table></div>
-<p class="since">Since 2.12.0</p>
+<p class="since">Since 3.0</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -1029,7 +1029,7 @@ during the lifetime of this structure.
 </p>
 <p>
 <em class="parameter"><code>flags</code></em> might be zero or one of <a class="link" href="gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-AUTO-RELEASE:CAPS" title="GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE"><code class="literal">GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE</code></a>
-and <a href="https://www.gnu.org/software/gnutls/reference/gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-COPY:CAPS"><code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code></a>.
+and <code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1071,7 +1071,7 @@ during the lifetime of this structure.
 </p>
 <p>
 <em class="parameter"><code>flags</code></em> might be zero or one of <a class="link" href="gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-AUTO-RELEASE:CAPS" title="GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE"><code class="literal">GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE</code></a>
-and <a href="https://www.gnu.org/software/gnutls/reference/gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-COPY:CAPS"><code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code></a>.
+and <code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1114,7 +1114,7 @@ preferred will be used, or the master key otherwise.
 </p>
 <p>
 <em class="parameter"><code>flags</code></em> might be zero or one of <a class="link" href="gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-AUTO-RELEASE:CAPS" title="GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE"><code class="literal">GNUTLS_PRIVKEY_IMPORT_AUTO_RELEASE</code></a>
-and <a href="https://www.gnu.org/software/gnutls/reference/gnutls-abstract.html#GNUTLS-PRIVKEY-IMPORT-COPY:CAPS"><code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code></a>.
+and <code class="literal">GNUTLS_PRIVKEY_IMPORT_COPY</code>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">

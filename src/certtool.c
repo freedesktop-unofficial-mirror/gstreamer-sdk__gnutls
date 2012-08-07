@@ -49,8 +49,6 @@
 #include "certtool-args.h"
 #include "certtool-common.h"
 
-#define SIGN_HASH GNUTLS_DIG_SHA256
-
 static void privkey_info_int (common_info_st*, gnutls_x509_privkey_t key);
 static void print_crl_info (gnutls_x509_crl_t crl, FILE * out);
 void pkcs7_info (void);
@@ -223,7 +221,11 @@ generate_private_key_int (common_info_st * cinfo)
 static int
 cipher_to_flags (const char *cipher)
 {
-  if (strcasecmp (cipher, "3des") == 0)
+  if (cipher == NULL)
+    {
+      return GNUTLS_PKCS_USE_PBES2_AES_128;
+    }
+  else if (strcasecmp (cipher, "3des") == 0)
     {
       return GNUTLS_PKCS_USE_PBES2_3DES;
     }
@@ -365,6 +367,7 @@ generate_certificate (gnutls_privkey_t * ret_key,
           get_locality_crt_set (crt);
           get_state_crt_set (crt);
           get_cn_crt_set (crt);
+          get_dc_set (TYPE_CRT, crt);
           get_uid_crt_set (crt);
           get_oid_crt_set (crt);
           get_key_purpose_set (crt);
@@ -412,7 +415,7 @@ generate_certificate (gnutls_privkey_t * ret_key,
 
   result =
     gnutls_x509_crt_set_expiration_time (crt,
-                                         time (NULL) + days * 24 * 60 * 60);
+                                         time (NULL) + ((time_t) days) * 24 * 60 * 60);
   if (result < 0)
     error (EXIT_FAILURE, 0, "set_expiration: %s", gnutls_strerror (result));
 
@@ -479,11 +482,10 @@ generate_certificate (gnutls_privkey_t * ret_key,
 
       is_ike = get_ipsec_ike_status ();
       server = get_tls_server_status ();
-      if ((server != 0 && !proxy) || is_ike)
-        {
-          get_dns_name_set (TYPE_CRT, crt);
-          get_ip_addr_set (TYPE_CRT, crt);
-        }
+
+      get_dns_name_set (TYPE_CRT, crt);
+      get_uri_set (TYPE_CRT, crt);
+      get_ip_addr_set (TYPE_CRT, crt);
 
       if (server != 0)
         {
@@ -579,6 +581,8 @@ generate_certificate (gnutls_privkey_t * ret_key,
                        gnutls_strerror (result));
             }
         }
+      get_ocsp_issuer_set(crt);
+      get_ca_issuers_set(crt);
 
       if (usage != 0)
         {
@@ -721,12 +725,32 @@ generate_crl (gnutls_x509_crt_t ca_crt, common_info_st * cinfo)
 }
 
 static gnutls_digest_algorithm_t
+get_dig_for_pub (gnutls_pubkey_t pubkey)
+{
+  gnutls_digest_algorithm_t dig;
+  int result;
+  unsigned int mand;
+
+  result = gnutls_pubkey_get_preferred_hash_algorithm (pubkey, &dig, &mand);
+  if (result < 0)
+    {
+      error (EXIT_FAILURE, 0, "crt_get_preferred_hash_algorithm: %s",
+             gnutls_strerror (result));
+    }
+
+  /* if algorithm allows alternatives */
+  if (mand == 0 && default_dig != GNUTLS_DIG_UNKNOWN)
+    dig = default_dig;
+
+  return dig;
+}
+
+static gnutls_digest_algorithm_t
 get_dig (gnutls_x509_crt_t crt)
 {
   gnutls_digest_algorithm_t dig;
   gnutls_pubkey_t pubkey;
   int result;
-  unsigned int mand;
 
   gnutls_pubkey_init(&pubkey);
 
@@ -737,18 +761,9 @@ get_dig (gnutls_x509_crt_t crt)
              gnutls_strerror (result));
     }
 
-  result = gnutls_pubkey_get_preferred_hash_algorithm (pubkey, &dig, &mand);
-  if (result < 0)
-    {
-      error (EXIT_FAILURE, 0, "crt_get_preferred_hash_algorithm: %s",
-             gnutls_strerror (result));
-    }
+  dig = get_dig_for_pub (pubkey);
 
   gnutls_pubkey_deinit(pubkey);
-
-  /* if algorithm allows alternatives */
-  if (mand == 0 && default_dig != GNUTLS_DIG_UNKNOWN)
-    dig = default_dig;
 
   return dig;
 }
@@ -893,7 +908,7 @@ generate_signed_crl (common_info_st * cinfo)
   crl = generate_crl (ca_crt, cinfo);
 
   fprintf (stderr, "\n");
-  result = gnutls_x509_crl_privkey_sign(crl, ca_crt, ca_key, SIGN_HASH, 0);
+  result = gnutls_x509_crl_privkey_sign(crl, ca_crt, ca_key, get_dig (ca_crt), 0);
   if (result < 0)
     error (EXIT_FAILURE, 0, "crl_privkey_sign: %s", gnutls_strerror (result));
 
@@ -926,7 +941,7 @@ update_signed_certificate (common_info_st * cinfo)
   days = get_days ();
 
   result =
-    gnutls_x509_crt_set_expiration_time (crt, tim + days * 24 * 60 * 60);
+    gnutls_x509_crt_set_expiration_time (crt, tim + ((time_t) days) * 24 * 60 * 60);
   if (result < 0)
     error (EXIT_FAILURE, 0, "set_expiration: %s", gnutls_strerror (result));
 
@@ -1852,10 +1867,12 @@ generate_request (common_info_st * cinfo)
   get_locality_crq_set (crq);
   get_state_crq_set (crq);
   get_cn_crq_set (crq);
+  get_dc_set (TYPE_CRQ, crq);
   get_uid_crq_set (crq);
   get_oid_crq_set (crq);
 
   get_dns_name_set (TYPE_CRQ, crq);
+  get_uri_set (TYPE_CRQ, crq);
   get_ip_addr_set (TYPE_CRQ, crq);
   get_email_set (TYPE_CRQ, crq);
 
@@ -1965,7 +1982,7 @@ generate_request (common_info_st * cinfo)
   if (ret < 0)
     error (EXIT_FAILURE, 0, "set_key: %s", gnutls_strerror (ret));
 
-  ret = gnutls_x509_crq_privkey_sign (crq, pkey, SIGN_HASH, 0);
+  ret = gnutls_x509_crq_privkey_sign (crq, pkey, get_dig_for_pub (pubkey), 0);
   if (ret < 0)
     error (EXIT_FAILURE, 0, "sign: %s", gnutls_strerror (ret));
 
@@ -2594,7 +2611,8 @@ print_bag_data (gnutls_pkcs12_bag_t bag)
       result = gnutls_pkcs12_bag_get_key_id (bag, i, &id);
       if (result < 0)
         error (EXIT_FAILURE, 0, "get_key_id: %s", gnutls_strerror (type));
-      fprintf (outfile, "\tKey ID: %s\n", raw_to_string (id.data, id.size));
+      if (id.size > 0)
+        fprintf (outfile, "\tKey ID: %s\n", raw_to_string (id.data, id.size));
 
       result = gnutls_pkcs12_bag_get_data (bag, i, &cdata);
       if (result < 0)

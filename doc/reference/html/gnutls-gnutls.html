@@ -347,9 +347,6 @@ typedef             <a class="link" href="gnutls-gnutls.html#gnutls-openpgp-keyr
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-gnutls.html#gnutls-certificate-set-x509-crl" title="gnutls_certificate_set_x509_crl ()">gnutls_certificate_set_x509_crl</a>     (<em class="parameter"><code><span class="type">gnutls_certificate_credentials_t</span> res</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crl-t" title="gnutls_x509_crl_t"><span class="type">gnutls_x509_crl_t</span></a> *crl_list</code></em>,
                                                          <em class="parameter"><code><span class="type">int</span> crl_list_size</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gnutls-gnutls.html#gnutls-certificate-get-openpgp-keyring" title="gnutls_certificate_get_openpgp_keyring ()">gnutls_certificate_get_openpgp_keyring</a>
-                                                        (<em class="parameter"><code><span class="type">gnutls_certificate_credentials_t</span> sc</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-keyring-t" title="gnutls_openpgp_keyring_t"><span class="type">gnutls_openpgp_keyring_t</span></a> *keyring</code></em>);
 <span class="returnvalue">int</span>                 <a class="link" href="gnutls-gnutls.html#gnutls-global-init" title="gnutls_global_init ()">gnutls_global_init</a>                  (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gnutls-gnutls.html#gnutls-global-deinit" title="gnutls_global_deinit ()">gnutls_global_deinit</a>                (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">int</span>                 (<a class="link" href="gnutls-gnutls.html#mutex-init-func" title="mutex_init_func ()">*mutex_init_func</a>)                  (<em class="parameter"><code><span class="type">void</span> **mutex</code></em>);
@@ -741,7 +738,7 @@ const <span class="returnvalue">gnutls_datum_t</span> * <a class="link" href="gn
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION:CAPS"></a><h3>GNUTLS_VERSION</h3>
-<pre class="programlisting">#define GNUTLS_VERSION "3.0.14"
+<pre class="programlisting">#define GNUTLS_VERSION "3.0.21"
 </pre>
 <p>
 </p>
@@ -765,7 +762,7 @@ const <span class="returnvalue">gnutls_datum_t</span> * <a class="link" href="gn
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION-PATCH:CAPS"></a><h3>GNUTLS_VERSION_PATCH</h3>
-<pre class="programlisting">#define GNUTLS_VERSION_PATCH 14
+<pre class="programlisting">#define GNUTLS_VERSION_PATCH 21
 </pre>
 <p>
 </p>
@@ -773,7 +770,7 @@ const <span class="returnvalue">gnutls_datum_t</span> * <a class="link" href="gn
 <hr>
 <div class="refsect2">
 <a name="GNUTLS-VERSION-NUMBER:CAPS"></a><h3>GNUTLS_VERSION_NUMBER</h3>
-<pre class="programlisting">#define GNUTLS_VERSION_NUMBER 0x03000e
+<pre class="programlisting">#define GNUTLS_VERSION_NUMBER 0x030015
 </pre>
 <p>
 </p>
@@ -1728,21 +1725,20 @@ certificate verification.
 <tr>
 <td><p><a name="GNUTLS-CERT-SIGNER-NOT-FOUND:CAPS"></a><span class="term"><code class="literal">GNUTLS_CERT_SIGNER_NOT_FOUND</code></span></p></td>
 <td>The certificate's issuer is not known. 
-  This is the case if the issue is not included in the trusted certificate list.
-  not found.
+  This is the case if the issuer is not included in the trusted certificate list.
 </td>
 </tr>
 <tr>
 <td><p><a name="GNUTLS-CERT-SIGNER-NOT-CA:CAPS"></a><span class="term"><code class="literal">GNUTLS_CERT_SIGNER_NOT_CA</code></span></p></td>
-<td>The certiﬁcate’s signer was not a CA. This
-  may happen if this was a version 1 certiﬁcate, which is common with 
-  some CAs, or a version 3 certiﬁcate without the basic constrains extension.
+<td>The certificate's signer was not a CA. This
+  may happen if this was a version 1 certificate, which is common with 
+  some CAs, or a version 3 certificate without the basic constrains extension.
 </td>
 </tr>
 <tr>
 <td><p><a name="GNUTLS-CERT-INSECURE-ALGORITHM:CAPS"></a><span class="term"><code class="literal">GNUTLS_CERT_INSECURE_ALGORITHM</code></span></p></td>
-<td>The certiﬁcate was signed using an in-
-  secure algorithm such as MD2 or MD5. These algorithms have been broken and
+<td>The certificate was signed using an insecure
+  algorithm such as MD2 or MD5. These algorithms have been broken and
   should not be trusted.
 </td>
 </tr>
@@ -1856,7 +1852,8 @@ Enumeration of how TLS session should be terminated.  See <a class="link" href="
     GNUTLS_TLS1_1 = 3,
     GNUTLS_TLS1_2 = 4,
     GNUTLS_DTLS1_0 = 5,
-    GNUTLS_VERSION_MAX = GNUTLS_DTLS1_0,
+    GNUTLS_DTLS0_9 = 6,
+    GNUTLS_VERSION_MAX = GNUTLS_DTLS0_9,
     GNUTLS_VERSION_UNKNOWN = 0xff
 } gnutls_protocol_t;
 </pre>
@@ -1894,6 +1891,11 @@ Enumeration of different SSL/TLS protocol versions.
 <tr>
 <td><p><a name="GNUTLS-DTLS1-0:CAPS"></a><span class="term"><code class="literal">GNUTLS_DTLS1_0</code></span></p></td>
 <td>DTLS version 1.0.
+</td>
+</tr>
+<tr>
+<td><p><a name="GNUTLS-DTLS0-9:CAPS"></a><span class="term"><code class="literal">GNUTLS_DTLS0_9</code></span></p></td>
+<td>DTLS version 0.9 (Cisco AnyConnect / OpenSSL 0.9.8e).
 </td>
 </tr>
 <tr>
@@ -2349,8 +2351,8 @@ be allocated.  This function allocates structures which can only
 be free'd by calling <a class="link" href="gnutls-gnutls.html#gnutls-deinit" title="gnutls_deinit ()"><code class="function">gnutls_deinit()</code></a>.  Returns <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) on success.
 </p>
 <p>
-<em class="parameter"><code>flags</code></em> can be one of <a href="https://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#GNUTLS-CLIENT:CAPS"><code class="literal">GNUTLS_CLIENT</code></a> and <a href="https://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#GNUTLS-SERVER:CAPS"><code class="literal">GNUTLS_SERVER</code></a>. For a DTLS
-entity, the flags <a href="https://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#GNUTLS-DATAGRAM:CAPS"><code class="literal">GNUTLS_DATAGRAM</code></a> and  <a href="https://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#GNUTLS-NONBLOCK:CAPS"><code class="literal">GNUTLS_NONBLOCK</code></a> are
+<em class="parameter"><code>flags</code></em> can be one of <code class="literal">GNUTLS_CLIENT</code> and <code class="literal">GNUTLS_SERVER</code>. For a DTLS
+entity, the flags <code class="literal">GNUTLS_DATAGRAM</code> and  <code class="literal">GNUTLS_NONBLOCK</code> are
 also available. The latter flag will enable a non-blocking
 operation of the DTLS timers.
 </p>
@@ -3725,7 +3727,8 @@ default is <code class="function">send()</code>) then <a class="link" href="gnut
 <a class="link" href="gnutls-gnutls.html#GNUTLS-E-INTERRUPTED:CAPS" title="GNUTLS_E_INTERRUPTED"><code class="literal">GNUTLS_E_INTERRUPTED</code></a> or <a class="link" href="gnutls-gnutls.html#GNUTLS-E-AGAIN:CAPS" title="GNUTLS_E_AGAIN"><code class="literal">GNUTLS_E_AGAIN</code></a> is returned, you must
 call this function again, with the same parameters; alternatively
 you could provide a <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> pointer for data, and 0 for
-size. cf. <a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()"><code class="function">gnutls_record_get_direction()</code></a>.
+size. cf. <a class="link" href="gnutls-gnutls.html#gnutls-record-get-direction" title="gnutls_record_get_direction ()"><code class="function">gnutls_record_get_direction()</code></a>. The errno value EMSGSIZE
+maps to <a class="link" href="gnutls-gnutls.html#GNUTLS-E-LARGE-PACKET:CAPS" title="GNUTLS_E_LARGE_PACKET"><code class="literal">GNUTLS_E_LARGE_PACKET</code></a>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -3988,8 +3991,8 @@ is guarranteed not to block.
                                                          <em class="parameter"><code><span class="type">size_t</span> outsize</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> *out</code></em>);</pre>
 <p>
-Apply the TLS Pseudo-Random-Function (PRF) using the master secret
-on some data, seeded with the client and server random fields.
+Apply the TLS Pseudo-Random-Function (PRF) on the master secret
+and the provided data, seeded with the client and server random fields.
 </p>
 <p>
 The <em class="parameter"><code>label</code></em> variable usually contain a string denoting the purpose
@@ -4061,8 +4064,8 @@ The output is placed in <em class="parameter"><code>out</code></em>, which must 
                                                          <em class="parameter"><code><span class="type">size_t</span> outsize</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> *out</code></em>);</pre>
 <p>
-Apply the TLS Pseudo-Random-Function (PRF) using the master secret
-on some data.
+Apply the TLS Pseudo-Random-Function (PRF) on the master secret
+and the provided data.
 </p>
 <p>
 The <em class="parameter"><code>label</code></em> variable usually contain a string denoting the purpose
@@ -6185,15 +6188,6 @@ multiple times.
 </tbody>
 </table></div>
 <p class="since">Since 2.4.0</p>
-</div>
-<hr>
-<div class="refsect2">
-<a name="gnutls-certificate-get-openpgp-keyring"></a><h3>gnutls_certificate_get_openpgp_keyring ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gnutls_certificate_get_openpgp_keyring
-                                                        (<em class="parameter"><code><span class="type">gnutls_certificate_credentials_t</span> sc</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-openpgp-keyring-t" title="gnutls_openpgp_keyring_t"><span class="type">gnutls_openpgp_keyring_t</span></a> *keyring</code></em>);</pre>
-<p>
-</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -8400,6 +8394,10 @@ a server sends a prime with less bits than that
 <a class="link" href="gnutls-gnutls.html#GNUTLS-E-DH-PRIME-UNACCEPTABLE:CAPS" title="GNUTLS_E_DH_PRIME_UNACCEPTABLE"><code class="literal">GNUTLS_E_DH_PRIME_UNACCEPTABLE</code></a> will be returned by the handshake.
 </p>
 <p>
+Note that values lower than 512 bits may allow decryption of the
+exchanged data.
+</p>
+<p>
 This function has no effect in server side.
 </p>
 <div class="variablelist"><table border="0">
@@ -8565,7 +8563,7 @@ an error code is returned.</td>
 <p>
 This function sets a callback to be called in order to retrieve the
 certificate to be used in the handshake. You are advised
-to use <a href="https://www.gnu.org/software/gnutls/reference/gnutls-abstract.html#gnutls-certificate-set-retrieve-function2"><code class="function">gnutls_certificate_set_retrieve_function2()</code></a> because it
+to use <code class="function">gnutls_certificate_set_retrieve_function2()</code> because it
 is much more efficient in the processing it requires from gnutls.
 </p>
 <p>
@@ -8738,7 +8736,7 @@ list is being returned. Only the first certificate.
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
 <td>a pointer to a <span class="type">gnutls_datum_t</span> containing our
-certificates, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error or if no certificate
+certificate, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error or if no certificate
 was used.</td>
 </tr>
 </tbody>

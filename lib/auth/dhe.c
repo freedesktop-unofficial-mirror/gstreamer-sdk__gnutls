@@ -45,69 +45,69 @@ static int proc_dhe_client_kx (gnutls_session_t, uint8_t *, size_t);
 
 const mod_auth_st ecdhe_ecdsa_auth_struct = {
   "ECDHE_ECDSA",
-  _gnutls_gen_cert_server_certificate,
-  _gnutls_gen_cert_client_certificate,
+  _gnutls_gen_cert_server_crt,
+  _gnutls_gen_cert_client_crt,
   gen_dhe_server_kx,
   _gnutls_gen_ecdh_common_client_kx,   /* This is the only different */
-  _gnutls_gen_cert_client_cert_vrfy,
+  _gnutls_gen_cert_client_crt_vrfy,
   _gnutls_gen_cert_server_cert_req,
 
-  _gnutls_proc_certificate,
-  _gnutls_proc_certificate,
+  _gnutls_proc_crt,
+  _gnutls_proc_crt,
   proc_dhe_server_kx,
   proc_dhe_client_kx,
-  _gnutls_proc_cert_client_cert_vrfy,
+  _gnutls_proc_cert_client_crt_vrfy,
   _gnutls_proc_cert_cert_req
 };
 
 const mod_auth_st ecdhe_rsa_auth_struct = {
   "ECDHE_RSA",
-  _gnutls_gen_cert_server_certificate,
-  _gnutls_gen_cert_client_certificate,
+  _gnutls_gen_cert_server_crt,
+  _gnutls_gen_cert_client_crt,
   gen_dhe_server_kx,
   _gnutls_gen_ecdh_common_client_kx,   /* This is the only different */
-  _gnutls_gen_cert_client_cert_vrfy,
+  _gnutls_gen_cert_client_crt_vrfy,
   _gnutls_gen_cert_server_cert_req,
 
-  _gnutls_proc_certificate,
-  _gnutls_proc_certificate,
+  _gnutls_proc_crt,
+  _gnutls_proc_crt,
   proc_dhe_server_kx,
   proc_dhe_client_kx,
-  _gnutls_proc_cert_client_cert_vrfy,
+  _gnutls_proc_cert_client_crt_vrfy,
   _gnutls_proc_cert_cert_req
 };
 
 const mod_auth_st dhe_rsa_auth_struct = {
   "DHE_RSA",
-  _gnutls_gen_cert_server_certificate,
-  _gnutls_gen_cert_client_certificate,
+  _gnutls_gen_cert_server_crt,
+  _gnutls_gen_cert_client_crt,
   gen_dhe_server_kx,
   _gnutls_gen_dh_common_client_kx,
-  _gnutls_gen_cert_client_cert_vrfy,    /* gen client cert vrfy */
+  _gnutls_gen_cert_client_crt_vrfy,    /* gen client cert vrfy */
   _gnutls_gen_cert_server_cert_req,     /* server cert request */
 
-  _gnutls_proc_certificate,
-  _gnutls_proc_certificate,
+  _gnutls_proc_crt,
+  _gnutls_proc_crt,
   proc_dhe_server_kx,
   proc_dhe_client_kx,
-  _gnutls_proc_cert_client_cert_vrfy,   /* proc client cert vrfy */
+  _gnutls_proc_cert_client_crt_vrfy,   /* proc client cert vrfy */
   _gnutls_proc_cert_cert_req    /* proc server cert request */
 };
 
 const mod_auth_st dhe_dss_auth_struct = {
   "DHE_DSS",
-  _gnutls_gen_cert_server_certificate,
-  _gnutls_gen_cert_client_certificate,
+  _gnutls_gen_cert_server_crt,
+  _gnutls_gen_cert_client_crt,
   gen_dhe_server_kx,
   _gnutls_gen_dh_common_client_kx,
-  _gnutls_gen_cert_client_cert_vrfy,    /* gen client cert vrfy */
+  _gnutls_gen_cert_client_crt_vrfy,    /* gen client cert vrfy */
   _gnutls_gen_cert_server_cert_req,     /* server cert request */
 
-  _gnutls_proc_certificate,
-  _gnutls_proc_certificate,
+  _gnutls_proc_crt,
+  _gnutls_proc_crt,
   proc_dhe_server_kx,
   proc_dhe_client_kx,
-  _gnutls_proc_cert_client_cert_vrfy,   /* proc client cert vrfy */
+  _gnutls_proc_cert_client_crt_vrfy,   /* proc client cert vrfy */
   _gnutls_proc_cert_cert_req    /* proc server cert request */
 };
 

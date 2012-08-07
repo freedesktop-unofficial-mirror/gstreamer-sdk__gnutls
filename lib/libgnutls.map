@@ -634,7 +634,6 @@ GNUTLS_2_12
 	gnutls_pubkey_import_pkcs11_url;
 	gnutls_pubkey_get_verify_algorithm;
 	gnutls_pubkey_verify_hash;
-	gnutls_pkcs11_obj_export;
 	gnutls_pubkey_import;
 	gnutls_x509_crt_set_pubkey;
 	gnutls_x509_crq_set_pubkey;
@@ -692,6 +691,7 @@ GNUTLS_3_0_0 {
 	gnutls_dtls_cookie_send;
 	gnutls_dtls_prestate_set;
 	gnutls_dtls_get_data_mtu;
+	gnutls_dtls_set_data_mtu;
 	gnutls_cipher_set_iv;
 	gnutls_pcert_deinit;
 	gnutls_pcert_import_x509;
@@ -780,6 +780,16 @@ GNUTLS_3_0_0 {
 	gnutls_tdb_set_store_commitment_func;
 	gnutls_tdb_set_verify_func;
 	gnutls_tdb_deinit;
+	gnutls_x509_crt_set_authority_info_access;
+	gnutls_x509_crt_get_private_key_usage_period;
+	gnutls_x509_crq_get_private_key_usage_period;
+	gnutls_x509_crt_set_private_key_usage_period;
+	gnutls_x509_crq_set_private_key_usage_period;
+	gnutls_session_get_random;
+	gnutls_pubkey_verify_hash2;
+	gnutls_pk_to_sign;
+	gnutls_certificate_set_x509_system_trust;
+	gnutls_session_set_premaster;
 } GNUTLS_2_12;
 
 GNUTLS_PRIVATE {
@@ -816,7 +826,6 @@ GNUTLS_PRIVATE {
     # Internal symbols needed by gnutls-cli-debug:
     _gnutls_rsa_pms_set_version;
     _gnutls_record_set_default_version;
-    _gnutls_record_set_default_version;
     # Internal symbols needed by tests/gc:
     _gnutls_hmac_fast;
     _gnutls_pbkdf2_sha1;
@@ -828,4 +837,6 @@ GNUTLS_PRIVATE {
     # Internal symbols needed by tests/pkcs12_s2k:
     _gnutls_pkcs12_string_to_key;
     _gnutls_bin2hex;
+  local:
+    *;
 };

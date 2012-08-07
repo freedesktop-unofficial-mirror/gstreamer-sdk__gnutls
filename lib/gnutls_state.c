@@ -67,7 +67,7 @@ void
 _gnutls_session_ecc_curve_set (gnutls_session_t session,
                                gnutls_ecc_curve_t c)
 {
-  _gnutls_handshake_log("HSK[%p]: Selected ECC curve (%d)\n", session, c);
+  _gnutls_handshake_log("HSK[%p]: Selected ECC curve %s (%d)\n", session, gnutls_ecc_curve_get_name(c), c);
   session->security_parameters.ecc_curve = c;
 }
 
@@ -977,8 +977,8 @@ _gnutls_PRF (gnutls_session_t session,
  * @outsize: size of pre-allocated output buffer to hold the output.
  * @out: pre-allocate buffer to hold the generated data.
  *
- * Apply the TLS Pseudo-Random-Function (PRF) using the master secret
- * on some data.
+ * Apply the TLS Pseudo-Random-Function (PRF) on the master secret
+ * and the provided data.
  *
  * The @label variable usually contain a string denoting the purpose
  * for the generated data.  The @seed usually contain data such as the
@@ -1024,8 +1024,8 @@ gnutls_prf_raw (gnutls_session_t session,
  * @outsize: size of pre-allocated output buffer to hold the output.
  * @out: pre-allocate buffer to hold the generated data.
  *
- * Apply the TLS Pseudo-Random-Function (PRF) using the master secret
- * on some data, seeded with the client and server random fields.
+ * Apply the TLS Pseudo-Random-Function (PRF) on the master secret
+ * and the provided data, seeded with the client and server random fields.
  *
  * The @label variable usually contain a string denoting the purpose
  * for the generated data.  The @server_random_first indicate whether
@@ -1353,53 +1353,6 @@ gnutls_session_channel_binding (gnutls_session_t session,
   return 0;
 }
 
-/* returns overhead imposed by the record layer (encryption/compression)
- * etc. It does include the record layer headers.
- *
- * It may return a negative error code on error.
- */
-int _gnutls_record_overhead_rt(gnutls_session_t session)
-{
-record_parameters_st *params;
-int total = 0, ret, iv_size;
-
-  if (session->internals.initial_negotiation_completed == 0)
-    return RECORD_HEADER_SIZE(session);
-
-  ret = _gnutls_epoch_get (session, EPOCH_WRITE_CURRENT, &params);
-  if (ret < 0)
-    return gnutls_assert_val(ret);
-
-  /* requires padding */
-  iv_size = _gnutls_cipher_get_iv_size(params->cipher_algorithm);
-  total += iv_size;
-
-  if (_gnutls_cipher_is_block (params->cipher_algorithm) == CIPHER_BLOCK)
-    {
-      if (!IS_DTLS(session))
-        total += MAX_PAD_SIZE;
-      else
-        total += iv_size; /* iv_size == block_size */
-    }
-  
-  if (params->mac_algorithm == GNUTLS_MAC_AEAD)
-    total += _gnutls_cipher_get_tag_size(params->cipher_algorithm);
-  else
-    {
-      ret = _gnutls_hmac_get_algo_len(params->mac_algorithm);
-      if (ret < 0)
-        return gnutls_assert_val(ret);
-      total+=ret;
-    }
-
-  if (params->compression_algorithm != GNUTLS_COMP_NULL)
-    total += EXTRA_COMP_SIZE;
-  
-  total += RECORD_HEADER_SIZE(session);
-  
-  return total;
-}
-
 /**
  * gnutls_ecc_curve_get:
  * @session: is a #gnutls_session_t structure.
@@ -1430,4 +1383,35 @@ gnutls_protocol_t
 gnutls_protocol_get_version (gnutls_session_t session)
 {
   return _gnutls_protocol_get_version(session);
+}
+
+/**
+ * gnutls_session_get_random:
+ * @session: is a #gnutls_session_t structure.
+ * @client: the client part of the random
+ * @server: the server part of the random
+ *
+ * This functions returns pointers to the client and server
+ * random fields used in the TLS handshake. The pointers are
+ * not to be modified or deallocated.
+ *
+ * If a client random value has not yet been established, the output
+ * will be garbage.
+ *
+ * Since: 3.0
+ **/
+void
+gnutls_session_get_random (gnutls_session_t session, gnutls_datum_t* client, gnutls_datum_t* server)
+{
+  if (client)
+    {
+      client->data = session->security_parameters.client_random;
+      client->size = sizeof(session->security_parameters.client_random);
+    }
+
+  if (server)
+    {
+      server->data = session->security_parameters.server_random;
+      server->size = sizeof(session->security_parameters.server_random);
+    }
 }

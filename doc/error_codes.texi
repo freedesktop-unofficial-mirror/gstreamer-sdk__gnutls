@@ -2,7 +2,7 @@
 @item 0 @tab GNUTLS_@-E_@-SUCCESS @tab Success.
 @item -3 @tab GNUTLS_@-E_@-UNKNOWN_@-COMPRESSION_@-ALGORITHM @tab Could not negotiate a supported compression method.
 @item -6 @tab GNUTLS_@-E_@-UNKNOWN_@-CIPHER_@-TYPE @tab The cipher type is unsupported.
-@item -7 @tab GNUTLS_@-E_@-LARGE_@-PACKET @tab A large TLS record packet was received.
+@item -7 @tab GNUTLS_@-E_@-LARGE_@-PACKET @tab The transmitted packet is too large (EMSGSIZE).
 @item -8 @tab GNUTLS_@-E_@-UNSUPPORTED_@-VERSION_@-PACKET @tab A record packet with illegal version was received.
 @item -9 @tab GNUTLS_@-E_@-UNEXPECTED_@-PACKET_@-LENGTH @tab A TLS packet with unexpected length was received.
 @item -10 @tab GNUTLS_@-E_@-INVALID_@-SESSION @tab The specified session has been invalidated for some reason.

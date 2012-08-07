@@ -429,7 +429,7 @@ _gnutls_epoch_set_keys (gnutls_session_t session, uint16_t epoch)
   IV_size = _gnutls_cipher_get_iv_size (cipher_algo);
   key_size = gnutls_cipher_get_key_size (cipher_algo);
   export_flag = _gnutls_cipher_get_export_flag (cipher_algo);
-  hash_size = _gnutls_hash_get_algo_len (mac_algo);
+  hash_size = _gnutls_hmac_get_algo_len (mac_algo);
 
   ret = _gnutls_set_keys
     (session, params, hash_size, IV_size, key_size, export_flag);
@@ -466,7 +466,7 @@ _gnutls_epoch_set_keys (gnutls_session_t session, uint16_t epoch)
 	dst->timestamp = src->timestamp; \
 	dst->max_record_recv_size = src->max_record_recv_size; \
 	dst->max_record_send_size = src->max_record_send_size; \
-	dst->version = src->version
+	dst->version = src->version;
 
 static void
 _gnutls_set_resumed_parameters (gnutls_session_t session)
@@ -757,13 +757,9 @@ _gnutls_epoch_alloc (gnutls_session_t session, uint16_t epoch,
 }
 
 static inline int
-epoch_alive (gnutls_session_t session, record_parameters_st * params)
+epoch_is_active(gnutls_session_t session, record_parameters_st * params)
 {
   const security_parameters_st *sp = &session->security_parameters;
-
-  /* DTLS will, in addition, need to check the epoch timeout value. */
-  if (params->usage_cnt > 0)
-    return 1;
 
   if (params->epoch == sp->epoch_read)
     return 1;
@@ -777,6 +773,15 @@ epoch_alive (gnutls_session_t session, record_parameters_st * params)
   return 0;
 }
 
+static inline int
+epoch_alive (gnutls_session_t session, record_parameters_st * params)
+{
+  if (params->usage_cnt > 0)
+    return 1;
+
+  return epoch_is_active(session, params);
+}
+
 void
 _gnutls_epoch_gc (gnutls_session_t session)
 {
@@ -787,12 +792,18 @@ _gnutls_epoch_gc (gnutls_session_t session)
 
   /* Free all dead cipher state */
   for (i = 0; i < MAX_EPOCH_INDEX; i++)
-    if (session->record_parameters[i] != NULL
-        && !epoch_alive (session, session->record_parameters[i]))
-      {
-        _gnutls_epoch_free (session, session->record_parameters[i]);
-        session->record_parameters[i] = NULL;
-      }
+    {
+      if (session->record_parameters[i] != NULL)
+        {
+          if (!epoch_is_active(session, session->record_parameters[i]) && session->record_parameters[i]->usage_cnt)
+            _gnutls_record_log ("REC[%p]: Note inactive epoch %d has %d users\n", session, session->record_parameters[i]->epoch, session->record_parameters[i]->usage_cnt);
+          if (!epoch_alive (session, session->record_parameters[i]))
+            {
+              _gnutls_epoch_free (session, session->record_parameters[i]);
+              session->record_parameters[i] = NULL;
+            }
+        }
+    }
 
   /* Look for contiguous NULLs at the start of the array */
   for (i = 0; i < MAX_EPOCH_INDEX && session->record_parameters[i] == NULL;

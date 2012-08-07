@@ -38,6 +38,7 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+  AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module accept:
   # Code from module accept-tests:
   # Code from module alloca:
@@ -317,6 +318,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module time:
   # Code from module time-tests:
   # Code from module time_r:
+  # Code from module timer-time:
   # Code from module timespec:
   # Code from module u64:
   # Code from module u64-tests:
@@ -445,6 +447,7 @@ gl_STDIO_MODULE_INDICATOR([fseek])
 gl_FUNC_FSEEKO
 if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   AC_LIBOBJ([fseeko])
+  gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
 gl_FUNC_FSTAT
@@ -461,6 +464,7 @@ gl_STDIO_MODULE_INDICATOR([ftell])
 gl_FUNC_FTELLO
 if test $HAVE_FTELLO = 0 || test $REPLACE_FTELLO = 1; then
   AC_LIBOBJ([ftello])
+  gl_PREREQ_FTELLO
 fi
 gl_STDIO_MODULE_INDICATOR([ftello])
 gl_FUNC
@@ -568,6 +572,7 @@ if test $gl_func_isnanl_no_libm != yes; then
   AC_LIBOBJ([isnanl])
   gl_PREREQ_ISNANL
 fi
+AC_REQUIRE([gl_LARGEFILE])
 gl_LD_OUTPUT_DEF
 gl_LD_VERSION_SCRIPT
 AC_REQUIRE([gl_HEADER_SYS_SOCKET])
@@ -806,6 +811,7 @@ AC_PROG_MKDIR_P
 gl_HEADER_SYS_UIO
 AC_PROG_MKDIR_P
 gl_SYSEXITS
+gl_THREADLIB
 gl_HEADER_TIME_H
 gl_TIME_R
 if test $HAVE_LOCALTIME_R = 0 || test $REPLACE_LOCALTIME_R = 1; then
@@ -813,6 +819,7 @@ if test $HAVE_LOCALTIME_R = 0 || test $REPLACE_LOCALTIME_R = 1; then
   gl_PREREQ_TIME_R
 fi
 gl_TIME_MODULE_INDICATOR([time_r])
+gl_TIMER_TIME
 gl_TIMESPEC
 AC_REQUIRE([AC_C_INLINE])
 gl_UNISTD_H
@@ -830,7 +837,6 @@ gl_FUNC_VPRINTF_POSIX
 gl_STDIO_MODULE_INDICATOR([vprintf-posix])
 gl_FUNC_VSNPRINTF
 gl_STDIO_MODULE_INDICATOR([vsnprintf])
-AC_SUBST([WARN_CFLAGS])
 gl_WCHAR_H
 gl_XSIZE
   # End of code from modules
@@ -879,6 +885,7 @@ changequote([, ])dnl
   AC_SUBST([gltests_WITNESS])
   gl_module_indicator_condition=$gltests_WITNESS
   m4_pushdef([gl_MODULE_INDICATOR_CONDITION], [$gl_module_indicator_condition])
+AC_REQUIRE([AC_C_INLINE])
 gl_FUNC_DUP2
 if test $HAVE_DUP2 = 0 || test $REPLACE_DUP2 = 1; then
   AC_LIBOBJ([dup2])
@@ -899,7 +906,7 @@ gl_FUNC_UNGETC_WORKS
 gl_FUNC_UNGETC_WORKS
 gl_FUNC_UNGETC_WORKS
 gl_FUNC_FTRUNCATE
-if test $HAVE_FTRUNCATE = 0; then
+if test $HAVE_FTRUNCATE = 0 || test $REPLACE_FTRUNCATE = 1; then
   AC_LIBOBJ([ftruncate])
   gl_PREREQ_FTRUNCATE
 fi
@@ -1002,7 +1009,6 @@ gl_UNISTD_MODULE_INDICATOR([symlink])
 gl_SYS_IOCTL_H
 AC_PROG_MKDIR_P
 AC_CHECK_FUNCS_ONCE([shutdown])
-gl_THREADLIB
 gl_FUNC_UNSETENV
 if test $HAVE_UNSETENV = 0 || test $REPLACE_UNSETENV = 1; then
   AC_LIBOBJ([unsetenv])
@@ -1184,6 +1190,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/gettext.h
   lib/gettime.c
   lib/gettimeofday.c
+  lib/glthread/threadlib.c
   lib/inet_ntop.c
   lib/inet_pton.c
   lib/intprops.h
@@ -1392,6 +1399,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/netinet_in_h.m4
   m4/nls.m4
   m4/nocrash.m4
+  m4/off_t.m4
   m4/open.m4
   m4/opendir.m4
   m4/pathmax.m4
@@ -1454,6 +1462,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4
+  m4/timer_time.m4
   m4/timespec.m4
   m4/uintmax_t.m4
   m4/ungetc.m4
@@ -1477,6 +1486,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/macros.h
   tests/minus-zero.h
   tests/nan.h
+  tests/randomd.c
+  tests/randoml.c
   tests/signature.h
   tests/test-accept.c
   tests/test-alloca-opt.c
@@ -1503,6 +1514,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-fputc.c
   tests/test-fread.c
   tests/test-frexp.c
+  tests/test-frexp.h
   tests/test-frexpl.c
   tests/test-fseek.c
   tests/test-fseek.sh
@@ -1646,7 +1658,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/getpagesize.c
   tests=lib/glthread/lock.c
   tests=lib/glthread/lock.h
-  tests=lib/glthread/threadlib.c
   tests=lib/ignore-value.h
   tests=lib/inttypes.in.h
   tests=lib/ioctl.c

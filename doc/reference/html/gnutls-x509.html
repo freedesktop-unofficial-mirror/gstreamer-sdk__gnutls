@@ -1021,7 +1021,7 @@ Enumeration of different certificate import flags.
 <td><p><a name="GNUTLS-X509-CRT-LIST-FAIL-IF-UNSORTED:CAPS"></a><span class="term"><code class="literal">GNUTLS_X509_CRT_LIST_FAIL_IF_UNSORTED</code></span></p></td>
 <td>Fail if the certificates
   in the buffer are not ordered starting from subject to issuer.
-  The error code will be <a href="https://www.gnu.org/software/gnutls/reference/gnutls-gnutls.html#GNUTLS-E-CERTIFICATE-LIST-UNSORTED:CAPS"><code class="literal">GNUTLS_E_CERTIFICATE_LIST_UNSORTED</code></a>.
+  The error code will be <code class="literal">GNUTLS_E_CERTIFICATE_LIST_UNSORTED</code>.
 </td>
 </tr>
 </tbody>
@@ -1732,8 +1732,8 @@ the name and serial number of the certificate. In that case
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
-negative error value.</td>
+<td>On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-REQUESTED-DATA-NOT-AVAILABLE:CAPS" title="GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE"><code class="literal">GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE</code></a>
+if the extension is not present, otherwise a negative error value.</td>
 </tr>
 </tbody>
 </table></div>
@@ -1771,8 +1771,8 @@ extension field (2.5.29.14).
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td>On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, otherwise a
-negative error value.</td>
+<td>On success, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-SUCCESS:CAPS" title="GNUTLS_E_SUCCESS"><code class="literal">GNUTLS_E_SUCCESS</code></a> (0) is returned, <a class="link" href="gnutls-gnutls.html#GNUTLS-E-REQUESTED-DATA-NOT-AVAILABLE:CAPS" title="GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE"><code class="literal">GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE</code></a>
+if the extension is not present, otherwise a negative error value.</td>
 </tr>
 </tbody>
 </table></div>
@@ -3791,7 +3791,7 @@ negative error value.</td>
                                                          <em class="parameter"><code><span class="type">gnutls_datum_t</span> *start</code></em>);</pre>
 <p>
 This function will return a pointer to the DER encoded DN structure
-and the length.
+and the length. This points to allocated data that must be free'd using <a class="link" href="gnutls-gnutls.html#gnutls-free" title="gnutls_free"><code class="function">gnutls_free()</code></a>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -3819,7 +3819,7 @@ negative error value.or a negative error code on error.</td>
                                                          <em class="parameter"><code><span class="type">gnutls_datum_t</span> *start</code></em>);</pre>
 <p>
 This function will return a pointer to the DER encoded DN structure and
-the length.
+the length. This points to allocated data that must be free'd using <a class="link" href="gnutls-gnutls.html#gnutls-free" title="gnutls_free"><code class="function">gnutls_free()</code></a>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -5754,7 +5754,8 @@ Enumeration of different certificate verify flags.
                                                          <em class="parameter"><code><a class="link" href="gnutls-gnutls.html#gnutls-x509-crt-t" title="gnutls_x509_crt_t"><span class="type">gnutls_x509_crt_t</span></a> issuer</code></em>);</pre>
 <p>
 This function will check if the given certificate was issued by the
-given issuer.
+given issuer. It checks the DN fields and the authority
+key identifier and subject key identifier fields match.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -6266,8 +6267,9 @@ native <a class="link" href="gnutls-gnutls.html#gnutls-x509-privkey-t" title="gn
 <em class="parameter"><code>key</code></em> .
 </p>
 <p>
-If the key is PEM encoded it should have a header of "RSA PRIVATE
-KEY", or "DSA PRIVATE KEY".
+If the key is PEM encoded it should have a header that contains "PRIVATE
+KEY". Note that this function falls back to PKCS #8 decoding without
+password, if the default format fails to import.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">

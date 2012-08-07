@@ -116,7 +116,7 @@ libgnutls_la_LIBADD = ../gl/libgnu.la x509/libgnutls_x509.la \
 	auth/libgnutls_auth.la algorithms/libgnutls_alg.la \
 	extras/libgnutls_extras.la \
 	$(LTLIBZ)  $(LTLIBINTL) $(LIBSOCKET) $(LTLIBDL) \
-	$(LTLIBPTHREAD) $(P11_KIT_LIBS)
+	$(LTLIBPTHREAD) $(P11_KIT_LIBS) $(LIB_SELECT)
 
 if ENABLE_OPENPGP
 libgnutls_la_LIBADD += openpgp/libgnutls_openpgp.la
@@ -138,6 +138,10 @@ endif
 if ENABLE_NETTLE
 libgnutls_la_LDFLAGS += $(LTLIBNETTLE)
 libgnutls_la_LIBADD += nettle/libcrypto.la
+endif
+
+if WINDOWS
+libgnutls_la_LDFLAGS += -lcrypt32
 endif
 
 if HAVE_LD_OUTPUT_DEF

@@ -25,7 +25,7 @@
 
 #include <gnutls/abstract.h>
 
-int _gnutls_handshake_sign_cert_vrfy (gnutls_session_t session,
+int _gnutls_handshake_sign_crt_vrfy (gnutls_session_t session,
                                       gnutls_pcert_st* cert,
                                       gnutls_privkey_t pkey,
                                       gnutls_datum_t * signature);
@@ -37,7 +37,7 @@ int _gnutls_handshake_sign_data (gnutls_session_t session,
                                  gnutls_datum_t * signature,
                                  gnutls_sign_algorithm_t * algo);
 
-int _gnutls_handshake_verify_cert_vrfy (gnutls_session_t session,
+int _gnutls_handshake_verify_crt_vrfy (gnutls_session_t session,
                                         gnutls_pcert_st* cert,
                                         gnutls_datum_t * signature,
                                         gnutls_sign_algorithm_t);
@@ -66,7 +66,7 @@ _gnutls_privkey_sign_hash (gnutls_privkey_t key,
 
 int
 decode_ber_digest_info (const gnutls_datum_t * info,
-                        gnutls_mac_algorithm_t * hash,
+                        gnutls_digest_algorithm_t * hash,
                         uint8_t * digest, unsigned int *digest_size);
 
 #endif

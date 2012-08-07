@@ -336,6 +336,7 @@ gnutls
 @GNUTLS_TLS1_1: 
 @GNUTLS_TLS1_2: 
 @GNUTLS_DTLS1_0: 
+@GNUTLS_DTLS0_9: 
 @GNUTLS_VERSION_MAX: 
 @GNUTLS_VERSION_UNKNOWN: 
 
@@ -1775,15 +1776,6 @@ gnutls
 @crl_list: 
 @crl_list_size: 
 @Returns: 
-
-
-<!-- ##### FUNCTION gnutls_certificate_get_openpgp_keyring ##### -->
-<para>
-
-</para>
-
-@sc: 
-@keyring: 
 
 
 <!-- ##### FUNCTION gnutls_global_init ##### -->

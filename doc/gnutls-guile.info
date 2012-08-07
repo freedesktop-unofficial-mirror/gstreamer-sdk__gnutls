@@ -1,8 +1,7 @@
 This is gnutls-guile.info, produced by makeinfo version 4.13.90 from
 gnutls-guile.texi.
 
-This manual is last updated 29 January 2012 for version 3.0.14 of
-GnuTLS.
+This manual is last updated 10 May 2012 for version 3.0.22 of GnuTLS.
 
 Copyright (C) 2001-2012 Free Software Foundation, Inc.
 
@@ -23,8 +22,7 @@ File: gnutls-guile.info,  Node: Top,  Next: Preface,  Up: (dir)
 GnuTLS-Guile
 ************
 
-This manual is last updated 29 January 2012 for version 3.0.14 of
-GnuTLS.
+This manual is last updated 10 May 2012 for version 3.0.22 of GnuTLS.
 
 Copyright (C) 2001-2012 Free Software Foundation, Inc.
 
@@ -128,7 +126,7 @@ the version number of the loaded library as follows:
      $ guile
      guile> (use-modules (gnutls))
      guile> (gnutls-version)
-     "3.0.14"
+     "3.0.22"
      guile>
 
 
@@ -1087,7 +1085,7 @@ GNU Free Documentation License
                      Version 1.3, 3 November 2008
 
      Copyright (C) 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
-     'http://fsf.org/'
+     <http://fsf.org/>
 
      Everyone is permitted to copy and distribute verbatim copies
      of this license document, but changing it is not allowed.
@@ -1484,7 +1482,7 @@ GNU Free Documentation License
      the GNU Free Documentation License from time to time.  Such new
      versions will be similar in spirit to the present version, but may
      differ in detail to address new problems or concerns.  See
-     'http://www.gnu.org/copyleft/'.
+     <http://www.gnu.org/copyleft/>.
 
      Each version of the License is given a distinguishing version
      number.  If the Document specifies that a particular numbered
@@ -1563,20 +1561,20 @@ their use in free software.
 
 
 Tag Table:
-Node: Top783
-Node: Preface1777
-Node: Guile Preparations2282
-Node: Guile API Conventions4921
-Node: Enumerates and Constants5495
-Node: Procedure Names7820
-Node: Representation of Binary Data8803
-Node: Input and Output9910
-Node: Exception Handling11783
-Node: Guile Examples13611
-Node: Anonymous Authentication Guile Example14065
-Node: OpenPGP Authentication Guile Example16627
-Node: Importing OpenPGP Keys Guile Example19509
-Node: Guile Reference20949
-Node: Copying Information41390
+Node: Top779
+Node: Preface1769
+Node: Guile Preparations2274
+Node: Guile API Conventions4913
+Node: Enumerates and Constants5487
+Node: Procedure Names7812
+Node: Representation of Binary Data8795
+Node: Input and Output9902
+Node: Exception Handling11775
+Node: Guile Examples13603
+Node: Anonymous Authentication Guile Example14057
+Node: OpenPGP Authentication Guile Example16619
+Node: Importing OpenPGP Keys Guile Example19501
+Node: Guile Reference20941
+Node: Copying Information41382
 
 End Tag Table

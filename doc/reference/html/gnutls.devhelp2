@@ -18,7 +18,7 @@
     <sub name="Index of new symbols in 2.8.0" link="api-index-2-8-0.html"/>
     <sub name="Index of new symbols in 2.10.0" link="api-index-2-10-0.html"/>
     <sub name="Index of new symbols in 2.12.0" link="api-index-2-12-0.html"/>
-    <sub name="Index of new symbols in 3.0.0" link="api-index-3-0-0.html"/>
+    <sub name="Index of new symbols in 3.0.x" link="api-index-3-0.html"/>
   </chapters>
   <functions>
     <keyword type="macro" name="HAVE_SSIZE_T" link="gnutls-gnutls.html#HAVE-SSIZE-T:CAPS"/>
@@ -205,7 +205,6 @@
     <keyword type="function" name="gnutls_certificate_set_x509_key ()" link="gnutls-gnutls.html#gnutls-certificate-set-x509-key" since="2.4.0"/>
     <keyword type="function" name="gnutls_certificate_set_x509_trust ()" link="gnutls-gnutls.html#gnutls-certificate-set-x509-trust" since="2.4.0"/>
     <keyword type="function" name="gnutls_certificate_set_x509_crl ()" link="gnutls-gnutls.html#gnutls-certificate-set-x509-crl" since="2.4.0"/>
-    <keyword type="function" name="gnutls_certificate_get_openpgp_keyring ()" link="gnutls-gnutls.html#gnutls-certificate-get-openpgp-keyring"/>
     <keyword type="function" name="gnutls_global_init ()" link="gnutls-gnutls.html#gnutls-global-init"/>
     <keyword type="function" name="gnutls_global_deinit ()" link="gnutls-gnutls.html#gnutls-global-deinit"/>
     <keyword type="function" name="mutex_init_func ()" link="gnutls-gnutls.html#mutex-init-func"/>
@@ -482,7 +481,7 @@
     <keyword type="function" name="gnutls_pubkey_import_rsa_raw ()" link="gnutls-abstract.html#gnutls-pubkey-import-rsa-raw" since="2.12.0"/>
     <keyword type="function" name="gnutls_x509_crt_set_pubkey ()" link="gnutls-abstract.html#gnutls-x509-crt-set-pubkey" since="2.12.0"/>
     <keyword type="function" name="gnutls_x509_crq_set_pubkey ()" link="gnutls-abstract.html#gnutls-x509-crq-set-pubkey" since="2.12.0"/>
-    <keyword type="function" name="gnutls_pubkey_verify_hash ()" link="gnutls-abstract.html#gnutls-pubkey-verify-hash" since="2.12.0"/>
+    <keyword type="function" name="gnutls_pubkey_verify_hash ()" link="gnutls-abstract.html#gnutls-pubkey-verify-hash" since="3.0"/>
     <keyword type="function" name="gnutls_pubkey_get_verify_algorithm ()" link="gnutls-abstract.html#gnutls-pubkey-get-verify-algorithm" since="2.12.0"/>
     <keyword type="struct" name="struct gnutls_privkey_st" link="gnutls-abstract.html#gnutls-privkey-st"/>
     <keyword type="typedef" name="gnutls_privkey_t" link="gnutls-abstract.html#gnutls-privkey-t"/>
@@ -1035,6 +1034,7 @@
     <keyword type="constant" name="GNUTLS_TLS1_1" link="gnutls-gnutls.html#GNUTLS-TLS1-1:CAPS"/>
     <keyword type="constant" name="GNUTLS_TLS1_2" link="gnutls-gnutls.html#GNUTLS-TLS1-2:CAPS"/>
     <keyword type="constant" name="GNUTLS_DTLS1_0" link="gnutls-gnutls.html#GNUTLS-DTLS1-0:CAPS"/>
+    <keyword type="constant" name="GNUTLS_DTLS0_9" link="gnutls-gnutls.html#GNUTLS-DTLS0-9:CAPS"/>
     <keyword type="constant" name="GNUTLS_VERSION_MAX" link="gnutls-gnutls.html#GNUTLS-VERSION-MAX:CAPS"/>
     <keyword type="constant" name="GNUTLS_VERSION_UNKNOWN" link="gnutls-gnutls.html#GNUTLS-VERSION-UNKNOWN:CAPS"/>
     <keyword type="constant" name="GNUTLS_CRT_UNKNOWN" link="gnutls-gnutls.html#GNUTLS-CRT-UNKNOWN:CAPS"/>

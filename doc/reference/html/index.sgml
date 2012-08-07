@@ -167,6 +167,7 @@
 <ANCHOR id="GNUTLS-TLS1-1:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-TLS1-1:CAPS">
 <ANCHOR id="GNUTLS-TLS1-2:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-TLS1-2:CAPS">
 <ANCHOR id="GNUTLS-DTLS1-0:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-DTLS1-0:CAPS">
+<ANCHOR id="GNUTLS-DTLS0-9:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-DTLS0-9:CAPS">
 <ANCHOR id="GNUTLS-VERSION-MAX:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-VERSION-MAX:CAPS">
 <ANCHOR id="GNUTLS-VERSION-UNKNOWN:CAPS" href="gnutls/gnutls-gnutls.html#GNUTLS-VERSION-UNKNOWN:CAPS">
 <ANCHOR id="gnutls-certificate-type-t" href="gnutls/gnutls-gnutls.html#gnutls-certificate-type-t">
@@ -367,7 +368,6 @@
 <ANCHOR id="gnutls-certificate-set-x509-key" href="gnutls/gnutls-gnutls.html#gnutls-certificate-set-x509-key">
 <ANCHOR id="gnutls-certificate-set-x509-trust" href="gnutls/gnutls-gnutls.html#gnutls-certificate-set-x509-trust">
 <ANCHOR id="gnutls-certificate-set-x509-crl" href="gnutls/gnutls-gnutls.html#gnutls-certificate-set-x509-crl">
-<ANCHOR id="gnutls-certificate-get-openpgp-keyring" href="gnutls/gnutls-gnutls.html#gnutls-certificate-get-openpgp-keyring">
 <ANCHOR id="gnutls-global-init" href="gnutls/gnutls-gnutls.html#gnutls-global-init">
 <ANCHOR id="gnutls-global-deinit" href="gnutls/gnutls-gnutls.html#gnutls-global-deinit">
 <ANCHOR id="mutex-init-func" href="gnutls/gnutls-gnutls.html#mutex-init-func">

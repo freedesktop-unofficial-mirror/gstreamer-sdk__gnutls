@@ -22,6 +22,7 @@
 @menu
 * General idea::
 * Error handling::
+* Common types::
 * Debugging and auditing::
 * Thread safety::
 * Callback functions::
@@ -88,11 +89,40 @@ This error code indicates that the server requests a re-handshake. The
 client may ignore this request, or may reply with an alert.  You can
 test if an error code is a fatal one by using the
 @funcref{gnutls_error_is_fatal}.
+All errors can be converted to a descriptive string using @funcref{gnutls_strerror}.
 
 If any non fatal errors, that require an action, are to be returned by
 a function, these error codes will be documented in the function's
-reference.  See @ref{Error codes}, for a description of the available 
-error codes.
+reference. For example the error codes @code{GNUTLS_@-E_@-WARNING_@-ALERT_@-RECEIVED} and @code{GNUTLS_@-E_@-FATAL_@-ALERT_@-RECEIVED}
+that may returned when receiving data, should be handled by notifying the
+user of the alert (as explained in @ref{Handling alerts}).
+See @ref{Error codes}, for a description of the available error codes.
+
+@node Common types
+@subsection Common types
+
+Several functions in @acronym{GnuTLS} use @code{gnutls_datum_t} which is
+convenient way to combine a pointer to data and data's size. Its definition is
+shown below.
+@verbatim
+  typedef struct
+  {
+    unsigned char *data;
+    unsigned int size;
+  } gnutls_datum_t;
+@end verbatim
+
+Other functions that require data for scattered read use a structure similar
+to @code{struct iovec} typically used by @funcintref{readv}. It is shown
+below.
+@verbatim
+  typedef struct
+  {
+    void *iov_base;             /* Starting address */
+    size_t iov_len;             /* Number of bytes to transfer */
+  } giovec_t;
+@end verbatim
+
 
 @node Debugging and auditing
 @subsection Debugging and auditing
@@ -139,7 +169,7 @@ is not the case, the use of the operating system defaults is recommended. An exa
 non-native thread usage is shown below.
 
 @example
-#include <gnutls.h>
+#include <gnutls/gnutls.h>
 
 int main()
 @{
@@ -395,7 +425,7 @@ In that case a certificate should be selected according the peer's signature
 algorithm preferences. To get those preferences use
 @funcref{gnutls_sign_algorithm_get_requested}. Both functions are shown below.
 
-@showfuncB{gnutls_certificate_set_retrieve_function,gnutls_sign_algorithm_get_requested}
+@showfuncC{gnutls_certificate_set_retrieve_function,gnutls_certificate_set_retrieve_function2,gnutls_sign_algorithm_get_requested}
 
 The functions above do not handle the requested server name automatically.
 A server would need to check the name requested by the client
@@ -565,15 +595,17 @@ value instead of setting @code{errno} directly.
 
 @showfuncdesc{gnutls_transport_set_errno}
 
-@acronym{GnuTLS} currently only interprets the EINTR and EAGAIN errno
+@acronym{GnuTLS} currently only interprets the EINTR, EAGAIN and EMSGSIZE errno
 values and returns the corresponding @acronym{GnuTLS} error codes:
 @itemize
 @item @code{GNUTLS_E_INTERRUPTED} 
 @item @code{GNUTLS_E_AGAIN}
+@item @code{GNUTLS_E_LARGE_PACKET}
 @end itemize
 The EINTR and EAGAIN values are returned by interrupted system calls, 
 or when non blocking IO is used.  All @acronym{GnuTLS} functions can be 
-resumed (called again), if any of the above error codes is returned.  
+resumed (called again), if any of the above error codes is returned. The
+EMSGSIZE value is returned when attempting to send a large datagram.
 
 In the case of DTLS it is also desirable to override the generic 
 transport functions with functions that emulate the operation
@@ -596,13 +628,18 @@ remaining until the next retransmission, or better the time until
 @node Asynchronous operation
 @subsection Asynchronous operation
 @acronym{GnuTLS} can be used with asynchronous socket or event-driven programming.
-During a TLS protocol session @acronym{GnuTLS} does not block for anything except
-calculations. The only blocking operations are due to the transport layer (sockets) functions.
-Those, however, in an asynchronous scenario are typically set to
-non-blocking mode, which forces them to return @code{EAGAIN} error code instead of blocking. 
-In that case @acronym{GnuTLS} functions
-will return the @code{GNUTLS_E_AGAIN} error code and can be resumed the
-same way as a system call would. The only exception is @funcref{gnutls_record_send},
+The approach is similar to using Berkeley sockets under such an environment.
+The blocking, due to network interaction, calls such as
+@funcref{gnutls_handshake}, @funcref{gnutls_record_recv},
+can be set to non-blocking by setting the underlying sockets to non-blocking.
+If other push and pull functions are setup, then they should behave the same
+way as @funcintref{recv} and @funcintref{send} when used in a non-blocking
+way, i.e., set errno to @code{EAGAIN}. Since, during a TLS protocol session 
+@acronym{GnuTLS} does not block except for network interaction, the non blocking
+@code{EAGAIN} errno will be propagated and @acronym{GnuTLS} functions 
+will return the @code{GNUTLS_E_AGAIN} error code. Such calls can be resumed the 
+same way as a system call would. 
+The only exception is @funcref{gnutls_record_send},
 which if interrupted subsequent calls need not to include the data to be
 sent (can be called with NULL argument).
 
@@ -612,16 +649,24 @@ and notifies on them being ready for reading or writing data. Note however
 that this system call cannot notify on data present in @acronym{GnuTLS}
 read buffers, it is only applicable to the kernel sockets API. Thus if
 you are using it for reading from a @acronym{GnuTLS} session, make sure
-the session is read completely. That can be achieved by checking there 
+that any cached data are read completely. That can be achieved by checking there 
 are no data waiting to be read (using @funcref{gnutls_record_check_pending}), 
 either before the @funcintref{select} system call, or after a call to
 @funcref{gnutls_record_recv}. @acronym{GnuTLS} does not keep a write buffer,
-thus when writing @funcintref{select} need only to be consulted.
+thus when writing no additional actions are required.
 
-In the DTLS, however, @acronym{GnuTLS} might block due to timers
-required by the protocol. To prevent those timers from blocking a DTLS handshake,
-the @funcref{gnutls_init} should be called with the
-@code{GNUTLS_NONBLOCK} flag (see @ref{Session initialization}).
+Although in the TLS protocol implementation each call to receive or send
+function implies to restoring the same function that was interrupted, in
+the DTLS protocol this requirement isn't true.
+There are cases where a retransmission is required, which are indicated by
+a received message and thus @funcref{gnutls_record_get_direction} must be called 
+to decide which operation to restore, i.e., send or receive.
+@showfuncdesc{gnutls_record_get_direction}
+
+Moreover, to prevent blocking from DTLS' retransmission timers to block a
+handshake, the @funcref{gnutls_init} function should be called with the
+@code{GNUTLS_NONBLOCK} flag set (see @ref{Session initialization}).
+
 
 @node DTLS sessions
 @subsection DTLS sessions
@@ -687,10 +732,14 @@ fatal for the protocol or can be ignored.
 
 @showfuncdesc{gnutls_error_is_fatal}
 
-In DTLS it is advisable to use the extended receive
-function shown below, because it allows the extraction
-of the sequence number. This is required in DTLS because
-messages may arrive out of order.
+Although, in the TLS protocol the receive function can be called
+at any time, when DTLS is used the GnuTLS receive functions must be
+called once a message is available for reading, even if no data are
+expected. This is because in DTLS various (internal) actions
+may be required due to retransmission timers. Moreover,
+an extended receive function is shown below, which allows the extraction
+of the message's sequence number. Due to the unreliable nature of the
+protocol, this field allows distinguishing out-of-order messages.
 
 @showfuncdesc{gnutls_record_recv_seq}
 
@@ -719,17 +768,23 @@ During a TLS connection alert messages may be exchanged by the
 two peers. Those messages may be fatal, meaning the connection
 must be terminated afterwards, or warning when something needs
 to be reported to the peer, but without interrupting the session.
-The error codes @code{GNUTLS_E_WARNING_ALERT_RECEIVED}
-or @code{GNUTLS_E_FATAL_ALERT_RECEIVED} signal those alerts
+The error codes @code{GNUTLS_E_@-WARNING_@-ALERT_@-RECEIVED}
+or @code{GNUTLS_E_@-FATAL_@-ALERT_@-RECEIVED} signal those alerts
 when received, and may be returned by all GnuTLS functions that receive 
 data from the peer, being @funcref{gnutls_handshake} and @funcref{gnutls_record_recv}.
-Alerts messages may be sent to the peer using @funcref{gnutls_alert_send}.
+
+If those error codes are received the alert and its level should be logged
+or reported to the peer using the functions below.
 
 @showfuncdesc{gnutls_alert_get}
+@showfuncdesc{gnutls_alert_get_name}
+
+The peer may also be warned or notified of a fatal issue
+by using one of the functions below. All the available alerts
+are listed in @ref{The Alert Protocol}.
 
 @showfuncdesc{gnutls_alert_send}
-
-@showfuncB{gnutls_error_to_alert,gnutls_alert_get_name}
+@showfuncdesc{gnutls_error_to_alert}
 
 
 @node Priority Strings
@@ -954,7 +1009,8 @@ Specifying RSA with AES-128-CBC:
 Specifying the defaults except ARCFOUR-128:
     "NORMAL:-ARCFOUR-128"
 
-Enabling the 128-bit secure ciphers, while disabling SSL 3.0 and enabling compression:
+Enabling the 128-bit secure ciphers, while disabling SSL 3.0 and 
+enabling compression:
     "SECURE128:-VERS-SSL3.0:+COMP-DEFLATE"
 @end example
 
@@ -1081,9 +1137,10 @@ an alternative interface is available using a callback function.
 @cindex keying material exporters
 @cindex exporting keying material
 
-The TLS PRF can be used by other protocols to derive data.  The API to
-use is @funcref{gnutls_prf}.  The function needs to be provided with the
-label in the parameter @code{label}, and the extra data to mix in the
+The TLS PRF can be used by other protocols to derive keys based on
+the TLS master secret.  The API to use is @funcref{gnutls_prf}.  The 
+function needs to be provided with the label in the parameter 
+@code{label}, and the extra data to mix in the
 @code{extra} parameter.  Depending on whether you want to mix in the
 client or server random data first, you can set the
 @code{server_random_first} parameter.
@@ -1099,7 +1156,7 @@ rc = gnutls_prf (session, strlen (MYLABEL), MYLABEL, 0,
                  strlen (MYCONTEXT), MYCONTEXT, 32, out);
 @end example
 
-If you don't want to mix in the client/server random, there is a more
+If you don't want to mix in the client/server random, there is a 
 low-level TLS PRF interface called @funcref{gnutls_prf_raw}.
 
 @node Channel Bindings
@@ -1340,4 +1397,6 @@ Those functions will convert a human understandable security parameter
 of @code{gnutls_sec_param_t} type, to a number of bits suitable for a public 
 key algorithm.
 
-
+The following functions will set the minimum acceptable group size for Diffie-Hellman
+and SRP authentication. 
+@showfuncB{gnutls_dh_set_prime_bits,gnutls_srp_set_prime_bits}
