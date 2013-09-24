@@ -61,7 +61,7 @@ int store_pubkey(const char* db_name, const char* host,
 static int find_config_file(char* file, size_t max_size);
 #define MAX_FILENAME 512
 
-void *_gnutls_file_mutex;
+void *_gnutls_file_mutex = NULL;
 
 struct gnutls_tdb_int default_tdb = {
   store_pubkey,
